@@ -1,0 +1,9 @@
+node_modules/
+*.log
+.env
+.env.*
+!.env.example
+sessions.db
+crm.db
+*.sqlite
+*.sqlite3
