@@ -1,16 +1,16 @@
 diff --git a/server.js b/server.js
 --- a/server.js
 +++ b/server.js
-@@
+@@ -72,6 +72,7 @@ db.serialize(() => {
      posts_por_dia INTEGER DEFAULT 1,
      ultimo_post DATETIME,
 +    ultimo_slot TEXT,
      created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
-@@
+@@ -80,6 +81,7 @@ db.serialize(() => {
    // seed admin user
 +  db.run("ALTER TABLE post_schedules ADD COLUMN ultimo_slot TEXT", () => {});
    const email = 'wolfofdown@gmail.com';
-@@
+@@ -560,10 +562,12 @@ async function analisarSite(url) {
 -    let corFoco = corFocoAceitavel(varFoco) ? varFoco : null;
 -    if (!corFoco && corFocoAceitavel(ctaBtnHex)) corFoco = ctaBtnHex;
 -    if (!corFoco && corFocoAceitavel(primaryBtnHex)) corFoco = primaryBtnHex;
@@ -21,9 +21,7 @@ diff --git a/server.js b/server.js
 +    if (!corFoco && corFocoAceitavel(primaryBtnHex)) corFoco = primaryBtnHex;
 +    if (!corFoco && corFocoAceitavel(varFoco)) corFoco = varFoco;
 +    if (!corFoco && varFoco) corFoco = varFoco; // queda: usa a var mesmo assim
-@@
- function humanizarTexto(texto) {
-@@
+@@ -1008,6 +1012,20 @@ function humanizarTexto(texto) {
    return resultado;
  }
 +
@@ -38,18 +36,18 @@ diff --git a/server.js b/server.js
 +function escaparRegex(texto) {
 +  return String(texto || '').replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
 +}
-@@
+@@ -1024,8 +1042,8 @@ async function gerarPostAutomatico(clientId) {
 -          const termo = kw ? (kw.variacao || kw.termo) : (client.nicho || 'serviços especializados');
 -          const termoBase = kw ? kw.termo : termo;
 +          const termo = kw ? (kw.variacao || kw.termo) : (client.nicho || 'serviços especializados');
 +          const termoBase = normalizarKeywordPrincipal(kw ? kw.termo : termo, client.localizacao);
-@@
+@@ -1042,7 +1060,7 @@ async function gerarPostAutomatico(clientId) {
 -3. H2s: Devem conter termos de intenção de busca reais que o usuário pesquisaria: "quanto custa", "como funciona", "perto de mim", "urgence", "24 horas", "orçamento".
 +3. H2s: Devem conter termos de intenção de busca reais que o usuário pesquisaria: "quanto custa", "como funciona", "perto de mim", "urgente", "24 horas", "orçamento".
-@@
+@@ -1066,7 +1084,7 @@ async function gerarPostAutomatico(clientId) {
 -- Corpo do texto: 3 a 5 vezes em <strong>negrito</r
 +- Corpo do texto: 3 a 5 vezes em <strong>negrito</strong>.
-@@
+@@ -1130,6 +1148,15 @@ async function gerarPostAutomatico(clientId) {
                .replace(/^```[a-zA-Z0-9]*\s*\r?\n?/i, '')
                .replace(/\r?\n?```\s*$/i, '')
                .trim();
@@ -64,14 +62,13 @@ diff --git a/server.js b/server.js
 +            if (!/<(?:h2|h3|p|ul|ol|li)\b/i.test(conteudo)) {
 +              conteudo = humanizarTexto(conteudo);
 +            }
-@@
+@@ -1225,7 +1252,7 @@ cron.schedule('* * * * *', () => {
 -        // Verifica se o horário atual bate com o agendamento OU se estava previsto nos últimos 3 minutos
 +        // Aceita no máximo 1 minuto de atraso. O slot exato abaixo impede duplicação.
-         const matchesNow = horarios.includes(hhmm);
-@@
+@@ -1233,7 +1260,7 @@ cron.schedule('* * * * *', () => {
 -            if (diffMin > 0 && diffMin <= 3) {
 +            if (diffMin > 0 && diffMin <= 1) {
-@@
+@@ -1240,17 +1267,23 @@ cron.schedule('* * * * *', () => {
 -        // Evita disparar duas vezes para o mesmo agendamento nos últimos 3 minutos
 -        if (sched.ultimo_post) {
 -          const ultimo = new Date(sched.ultimo_post.endsWith('Z') ? sched.ultimo_post : sched.ultimo_post + 'Z');
@@ -86,15 +83,13 @@ diff --git a/server.js b/server.js
 +        if (!slotHora) continue;
 +        const slotKey = `${isoDate} ${slotHora}`;
 +        if (sched.ultimo_slot === slotKey) continue;
-@@
+@@ -1250,7 +1283,8 @@ cron.schedule('* * * * *', () => {
 -        db.run('UPDATE post_schedules SET ultimo_post = CURRENT_TIMESTAMP WHERE id = ?', [sched.id]);
 +        db.run('UPDATE post_schedules SET ultimo_post = CURRENT_TIMESTAMP, ultimo_slot = ? WHERE id = ? AND (ultimo_slot IS NULL OR ultimo_slot != ?)', [slotKey, sched.id, slotKey], function(updateErr) {
 +          if (updateErr || this.changes !== 1) return;
-@@
-         } else {
+@@ -1268,6 +1302,7 @@ cron.schedule('* * * * *', () => {
            gerarPostAutomatico(sched.client_id)
              .then(r => console.log(`[CRON] ✅ Post publicado: \"${r.titulo}\" para ${r.client_name}`))
              .catch(e => console.error(`[CRON] ❌ Falha:`, e.message));
          }
 +        });
-*** End Patch
