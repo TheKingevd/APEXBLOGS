@@ -29,16 +29,16 @@ const aiMarker = `/**
 async function gerarPostAutomatico(clientId) {
 `;
 const aiHelper = `function normalizarKeywordPrincipal(termo, localizacao) {
-  let texto = String(termo || '').replace(/\\s+/g, ' ').trim();
-  const local = String(localizacao || '').replace(/\\s+/g, ' ').trim();
+  let texto = String(termo || '').replace(/\s+/g, ' ').trim();
+  const local = String(localizacao || '').replace(/\s+/g, ' ').trim();
   texto = texto
-    .replace(/\\bEMERGENCIAL(?=\\d)/gi, 'EMERGENCIAL ')
-    .replace(/\\bURGENTE(?=\\d)/gi, 'URGENTE ')
-    .replace(/\\b24HORAS\\b/gi, '24 HORAS')
-    .replace(/\\b24H\\b/gi, '24 HORAS')
-    .replace(/\\s+/g, ' ')
+    .replace(/\bEMERGENCIAL(?=\d)/gi, 'EMERGENCIAL ')
+    .replace(/\bURGENTE(?=\d)/gi, 'URGENTE ')
+    .replace(/\b24HORAS\b/gi, '24 HORAS')
+    .replace(/\b24H\b/gi, '24 HORAS')
+    .replace(/\s+/g, ' ')
     .trim();
-  if (local && texto.toLowerCase().endsWith(\` em \\${local}\`.toLowerCase())) {
+  if (local && texto.toLowerCase().endsWith(\` em \${local}\`.toLowerCase())) {
     texto = texto.slice(0, -(local.length + 4)).trim();
   }
   return texto || 'serviço especializado';
@@ -46,25 +46,25 @@ const aiHelper = `function normalizarKeywordPrincipal(termo, localizacao) {
 
 function limparConteudoIA(conteudo, titulo) {
   let texto = String(conteudo || '')
-    .replace(/\\r\\n/g, '\\n')
+    .replace(/\r\n/g, '\n')
     .replace(/<!DOCTYPE[^>]*>/gi, '')
     .replace(/<html[^>]*>/gi, '')
-    .replace(/<\\/html>/gi, '')
-    .replace(/<head[^>]*>[\\s\\S]*?<\\/head>/gi, '')
+    .replace(/<\/html>/gi, '')
+    .replace(/<head[^>]*>[\s\S]*?<\/head>/gi, '')
     .replace(/<body[^>]*>/gi, '')
-    .replace(/<\\/body>/gi, '')
-    .replace(/<\\/r>/gi, '</strong>')
-    .replace(/^\\`\\`\\`(?:html)?\\s*/i, '')
-    .replace(/\\s*\\`\\`\\`$/i, '')
+    .replace(/<\/body>/gi, '')
+    .replace(/<\/r>/gi, '</strong>')
+    .replace(/^\x60{3}(?:html)?\s*/i, '')
+    .replace(/\s*\x60{3}$/i, '')
     .trim();
-  const linhas = texto.split('\\n');
-  const primeira = (linhas[0] || '').replace(/<[^>]+>/g, '').replace(/^[*#\\-•\\s]+/, '').trim();
+  const linhas = texto.split('\n');
+  const primeira = (linhas[0] || '').replace(/<[^>]+>/g, '').replace(/^[*#\-•\s]+/, '').trim();
   if (titulo && primeira && primeira.toLowerCase() === String(titulo).trim().toLowerCase()) {
     linhas.shift();
-    texto = linhas.join('\\n').trim();
+    texto = linhas.join('\n').trim();
   }
-  if (!/<(?:h2|h3|p|ul|ol|li)\\b/i.test(texto)) texto = humanizarTexto(texto);
-  texto = texto.replace(/^\\s*<h1[^>]*>[\\s\\S]*?<\\/h1>\\s*/i, '');
+  if (!/<(?:h2|h3|p|ul|ol|li)\b/i.test(texto)) texto = humanizarTexto(texto);
+  texto = texto.replace(/^\s*<h1[^>]*>[\s\S]*?<\/h1>\s*/i, '');
   return texto.trim();
 }
 
