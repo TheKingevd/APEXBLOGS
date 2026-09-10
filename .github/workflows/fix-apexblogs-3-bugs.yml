@@ -18,14 +18,13 @@ jobs:
           fetch-depth: 0
 
       - name: Patch server.js
-        shell: python
+        shell: python {0}
         run: |
           from pathlib import Path
 
           p = Path('server.js')
           s = p.read_text(encoding='utf-8')
 
-          # 1) Branding: a real CTA color must beat a generic CSS accent variable.
           old = """    let corFoco = corFocoAceitavel(varFoco) ? varFoco : null;
     if (!corFoco && corFocoAceitavel(ctaBtnHex)) corFoco = ctaBtnHex;
     if (!corFoco && corFocoAceitavel(primaryBtnHex)) corFoco = primaryBtnHex;
@@ -39,11 +38,9 @@ jobs:
     if (!corFoco && corFocoAceitavel(varFoco)) corFoco = varFoco;
     if (!corFoco && varFoco) corFoco = varFoco;
 """
-          if old not in s:
-              raise SystemExit('branding block not found')
+          if old not in s: raise SystemExit('branding block not found')
           s = s.replace(old, new, 1)
 
-          # 2) AI: normalize noisy keywords before sending them to the model.
           marker = """/**
  * Gera e publica um post automaticamente para um cliente.
  */
@@ -52,8 +49,6 @@ async function gerarPostAutomatico(clientId) {
           helper = r'''function normalizarKeywordPrincipal(termo, localizacao) {
   let texto = String(termo || '').replace(/\s+/g, ' ').trim();
   const local = String(localizacao || '').replace(/\s+/g, ' ').trim();
-
-  // Corrige palavras coladas comuns em keywords importadas de campanhas.
   texto = texto
     .replace(/\bEMERGENCIAL(?=\d)/gi, 'EMERGENCIAL ')
     .replace(/\bURGENTE(?=\d)/gi, 'URGENTE ')
@@ -61,12 +56,9 @@ async function gerarPostAutomatico(clientId) {
     .replace(/\b24H\b/gi, '24 HORAS')
     .replace(/\s+/g, ' ')
     .trim();
-
-  // A localização pertence ao contexto do artigo, não à keyword principal.
   if (local && texto.toLowerCase().endsWith(` em ${local}`.toLowerCase())) {
     texto = texto.slice(0, -(local.length + 4)).trim();
   }
-
   return texto || 'serviço especializado';
 }
 
@@ -83,20 +75,13 @@ function limparConteudoIA(conteudo, titulo) {
     .replace(/^```(?:html)?\s*/i, '')
     .replace(/\s*```$/i, '')
     .trim();
-
   const linhas = texto.split('\n');
   const primeira = (linhas[0] || '').replace(/<[^>]+>/g, '').replace(/^[*#\-•\s]+/, '').trim();
   if (titulo && primeira && primeira.toLowerCase() === String(titulo).trim().toLowerCase()) {
     linhas.shift();
     texto = linhas.join('\n').trim();
   }
-
-  // Se a IA devolveu texto puro, humanizarTexto converte Markdown básico em HTML.
-  if (!/<(?:h2|h3|p|ul|ol|li)\b/i.test(texto)) {
-    texto = humanizarTexto(texto);
-  }
-
-  // Nunca deixa um segundo título no início do artigo.
+  if (!/<(?:h2|h3|p|ul|ol|li)\b/i.test(texto)) texto = humanizarTexto(texto);
   texto = texto.replace(/^\s*<h1[^>]*>[\s\S]*?<\/h1>\s*/i, '');
   return texto.trim();
 }
@@ -106,15 +91,12 @@ function limparConteudoIA(conteudo, titulo) {
  */
 async function gerarPostAutomatico(clientId) {
 '''
-          if marker not in s:
-              raise SystemExit('AI marker not found')
+          if marker not in s: raise SystemExit('AI marker not found')
           s = s.replace(marker, helper, 1)
-
           s = s.replace("const termoBase = kw ? kw.termo : termo;", "const termoBase = normalizarKeywordPrincipal(kw ? kw.termo : termo, client.localizacao);", 1)
           s = s.replace('"urgence", "24 horas"', '"urgente", "24 horas"', 1)
           s = s.replace('em <strong>negrito</r', 'em <strong>negrito</strong>.', 1)
 
-          # Replace the existing content cleanup with the stronger sanitizer.
           old_cleanup = r'''            conteudo = conteudo
               .replace(/<!DOCTYPE[^>]*>/gi, '')
               .replace(/<html[^>]*>/gi, '')
@@ -130,13 +112,9 @@ async function gerarPostAutomatico(clientId) {
               .replace(/\r?\n?```\s*$/i, '')
               .trim();
 '''
-          new_cleanup = r'''            conteudo = limparConteudoIA(conteudo, titulo);
-'''
-          if old_cleanup not in s:
-              raise SystemExit('AI cleanup block not found')
-          s = s.replace(old_cleanup, new_cleanup, 1)
+          if old_cleanup not in s: raise SystemExit('AI cleanup block not found')
+          s = s.replace(old_cleanup, "            conteudo = limparConteudoIA(conteudo, titulo);\n", 1)
 
-          # 3) Scheduler: persist the exact date/time slot that was consumed.
           old_schema = """    ultimo_post DATETIME,
     created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
 """
@@ -144,17 +122,12 @@ async function gerarPostAutomatico(clientId) {
     ultimo_slot TEXT,
     created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
 """
-          if old_schema not in s:
-              raise SystemExit('schedule schema block not found')
+          if old_schema not in s: raise SystemExit('schedule schema block not found')
           s = s.replace(old_schema, new_schema, 1)
 
-          old_migration = """  db.run(\"ALTER TABLE post_schedules ADD COLUMN ultimo_post DATETIME\", () => {});
-"""
-          # Existing code does not have an ultimo_post migration on fresh source; add slot migration next to schedule setup.
-          migration_anchor = """  db.run(`CREATE TABLE IF NOT EXISTS client_ads ("""
-          if migration_anchor not in s:
-              raise SystemExit('migration anchor not found')
-          s = s.replace(migration_anchor, "  db.run(\"ALTER TABLE post_schedules ADD COLUMN ultimo_slot TEXT\", () => {});\n\n" + migration_anchor, 1)
+          anchor = """  db.run(`CREATE TABLE IF NOT EXISTS client_ads ("""
+          if anchor not in s: raise SystemExit('migration anchor not found')
+          s = s.replace(anchor, "  db.run(\"ALTER TABLE post_schedules ADD COLUMN ultimo_slot TEXT\", () => {});\n\n" + anchor, 1)
 
           old_window = """        // Verifica se o horário atual bate com o agendamento OU se estava previsto nos últimos 3 minutos
         const matchesNow = horarios.includes(hhmm);
@@ -197,24 +170,18 @@ async function gerarPostAutomatico(clientId) {
             }
           }
         }
-
         if (!slotHora) continue;
-
         const slotKey = `${isoDate} ${slotHora}`;
         if (sched.ultimo_slot === slotKey) continue;
-
         console.log(`[CRON] 🚀 Disparando agendamento (Schedule ID: ${sched.id}, Client ID: ${sched.client_id}) às ${hhmm} | Slot: ${slotKey}`);
-
         db.run(
           'UPDATE post_schedules SET ultimo_post = CURRENT_TIMESTAMP, ultimo_slot = ? WHERE id = ? AND (ultimo_slot IS NULL OR ultimo_slot != ?)',
           [slotKey, sched.id, slotKey],
           function(updateErr) {
             if (updateErr || this.changes !== 1) return;
-
             if (sched.client_id === 0 || sched.client_id === 'ALL' || sched.client_id === 'TODOS') {
 """
-          if old_window not in s:
-              raise SystemExit('scheduler block not found')
+          if old_window not in s: raise SystemExit('scheduler block not found')
           s = s.replace(old_window, new_window, 1)
 
           old_close = """          gerarPostAutomatico(sched.client_id)
@@ -233,8 +200,7 @@ async function gerarPostAutomatico(clientId) {
 
       } catch(e) {
 """
-          if old_close not in s:
-              raise SystemExit('scheduler close block not found')
+          if old_close not in s: raise SystemExit('scheduler close block not found')
           s = s.replace(old_close, new_close, 1)
 
           p.write_text(s, encoding='utf-8')
