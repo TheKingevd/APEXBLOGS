@@ -1,0 +1,1395 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>JN Desentupidora Mundial | Araguari - 24 Horas</title>
+    
+    <link rel="icon" href="https://jndesentupidoramundial.contrateagora.com/img/logo.webp">
+    <!-- Ícones Font Awesome com carregamento otimizado (font-display: swap) -->
+    <link rel="preload" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.4.0/css/all.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'" crossorigin="anonymous">
+    <noscript><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.4.0/css/all.min.css"></noscript>
+
+    <style>
+        /* Font display swap global para melhor desempenho */
+        @font-face { font-display: swap; }
+
+        /* 
+         * VARIÁVEIS INJETADAS VIA API (SEU BACKEND)
+         * O design baseia-se nestas cores. A IA vai trocar apenas estes valores.
+         */
+        :root {
+            --cor-primaria: #001a33; 
+            --cor-fundo-destaque: #ffffff; 
+            --cor-texto-destaque: #001a33;
+            --cor-foco: #e63946;
+            --fonte-titulos: Segoe UI; 
+            --fonte-padrao: Segoe UI;
+            
+            /* Cores de apoio do layout estrutural com alto contraste */
+            --cor-texto: #1e293b;
+            --cor-fundo-site: #f4f6f8;
+            --cor-bordas: #dcdcdc;
+            --cor-links: #001a33;
+            --cor-anuncio-bg: #e9ecef;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: var(--fonte-padrao);
+            background-color: var(--cor-fundo-site);
+            color: var(--cor-texto);
+            line-height: 1.6;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        a { color: var(--cor-links); text-decoration: none; transition: color 0.2s; }
+        a:hover { color: var(--cor-primaria); text-decoration: underline; }
+        img { max-width: 100%; height: auto; display: block; }
+
+        .container {
+            max-width: 1140px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        /* Accessible Sr-only class for heading hierarchy */
+        .sr-only {
+            position: absolute;
+            width: 1px;
+            height: 1px;
+            padding: 0;
+            margin: -1px;
+            overflow: hidden;
+            clip: rect(0, 0, 0, 0);
+            white-space: nowrap;
+            border: 0;
+        }
+
+        /* Barra Superior (Top Bar) */
+        .top-bar {
+            background-color: var(--cor-primaria);
+            color: #ffffff;
+            padding: 8px 0;
+            font-size: clamp(11px, 1.5vw, 13px);
+            border-bottom: 1px solid rgba(255,255,255,0.12);
+        }
+
+        .top-bar-inner {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .top-bar-contato {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+        .top-bar-contato span { display: inline-flex; align-items: center; gap: 5px; white-space: nowrap; }
+        .top-bar-contato i { color: var(--cor-foco); }
+        .top-bar-social { display: flex; align-items: center; gap: 4px; }
+        .top-bar-social a {
+            color: #ffffff;
+            font-size: 16px;
+            text-decoration: none;
+            min-width: 44px;
+            min-height: 44px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .top-bar-social a:hover { color: var(--cor-foco); }
+
+        /* Cabeçalho Principal (Header) */
+        .site-header {
+            background-color: var(--cor-primaria);
+            border-bottom: 4px solid var(--cor-foco);
+            box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .header-inner {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            min-height: 80px;
+            padding: 10px 0;
+            position: relative;
+        }
+
+        .logo-container a {
+            display: inline-flex;
+            align-items: center;
+            background-color: #ffffff;
+            padding: 6px 14px;
+            border-radius: 6px;
+            box-shadow: 0 1px 4px rgba(0,0,0,0.12);
+        }
+        .logo-container img { max-height: 48px; width: auto; max-width: 190px; object-fit: contain; }
+
+        /* Menu de Navegação */
+        .menu-toggle {
+            display: none;
+            background: none;
+            border: 1px solid rgba(255,255,255,0.4);
+            opacity: 0.9;
+            border-radius: 4px;
+            color: #ffffff;
+            font-size: 22px;
+            padding: 8px 12px;
+            cursor: pointer;
+            min-width: 44px;
+            min-height: 44px;
+        }
+
+        .main-nav ul { list-style: none; display: flex; gap: 15px; }
+        .main-nav a {
+            color: #ffffff;
+            font-weight: 700;
+            text-transform: uppercase;
+            font-size: clamp(12px, 1.8vw, 14px);
+            letter-spacing: 0.5px;
+            text-decoration: none;
+            white-space: nowrap;
+            transition: all 0.2s;
+            min-height: 44px;
+            display: inline-flex;
+            align-items: center;
+            padding: 4px 8px;
+        }
+        .main-nav a:hover, .main-nav a.active {
+            color: var(--cor-foco);
+            border-bottom: 3px solid var(--cor-foco);
+            padding-bottom: 5px;
+        }
+
+        /* Estrutura Principal */
+        .content-wrapper {
+            display: flex;
+            gap: 40px;
+            margin-top: 40px;
+            margin-bottom: 60px;
+        }
+
+        .main-content { flex: 1; min-width: 0; }
+        .sidebar { width: 320px; flex-shrink: 0; }
+
+        /* Espaços Publicitários Customizados */
+        .custom-ad {
+            background-color: var(--cor-anuncio-bg);
+            border: 1px solid var(--cor-bordas);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #888;
+            font-weight: bold;
+            font-size: 14px;
+            text-transform: uppercase;
+            position: relative;
+            margin-bottom: 30px;
+            text-decoration: none !important;
+            max-width: 100%;
+            word-break: break-word;
+        }
+        .custom-ad::before {
+            content: "Publicidade";
+            position: absolute;
+            top: 5px;
+            right: 10px;
+            font-size: 10px;
+            color: #aaa;
+            font-weight: normal;
+        }
+        .ad-sidebar { width: 100%; height: 250px; }
+        .ad-horizontal { width: 100%; max-width: 728px; height: 120px; margin: 30px auto; }
+
+        /* Post Destaque na Home */
+        .featured-post {
+            background-color: #fff;
+            border: 1px solid var(--cor-bordas);
+            margin-bottom: 40px;
+            position: relative;
+        }
+        .featured-img-container { width: 100%; overflow: hidden; border-bottom: 4px solid var(--cor-primaria); aspect-ratio: 16/9; }
+        .featured-img-container img { width: 100%; height: 100%; object-fit: cover; }
+        
+        .featured-content { padding: 30px; }
+        .featured-content h2 {
+            font-family: var(--fonte-titulos);
+            font-size: clamp(22px, 4vw, 32px);
+            margin-bottom: 15px;
+            line-height: 1.2;
+            color: var(--cor-fundo-destaque);
+        }
+        .featured-content h2 a { color: inherit; text-decoration: none; }
+        .featured-content h2 a:hover { text-decoration: underline; }
+        .featured-content p { font-size: 16px; color: #555; margin-bottom: 25px; }
+
+        /* Grid de Posts Secundários */
+        .post-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 30px;
+        }
+
+        .post-card {
+            background-color: #ffffff;
+            border: 1px solid var(--cor-bordas);
+            display: flex;
+            flex-direction: column;
+        }
+        .post-card-img { width: 100%; height: 200px; overflow: hidden; border-bottom: 2px solid var(--cor-primaria); }
+        .post-card-img img { width: 100%; height: 100%; object-fit: cover; transition: transform 0.3s; }
+        .post-card:hover .post-card-img img { transform: scale(1.05); }
+        
+        .post-card-content { padding: 20px; flex-grow: 1; display: flex; flex-direction: column; }
+        .post-meta { font-size: 12px; color: #475569; margin-bottom: 10px; text-transform: uppercase; font-weight: bold; border-bottom: 1px dotted #ccc; padding-bottom: 8px;}
+        .post-meta span.categoria { color: var(--cor-primaria); font-weight: 800; }
+        
+        .post-card h3 {
+            font-family: var(--fonte-titulos);
+            font-size: clamp(16px, 3vw, 20px);
+            color: var(--cor-texto-destaque);
+            margin-bottom: 12px;
+            line-height: 1.3;
+        }
+        .post-card h3 a { color: inherit; text-decoration: none; }
+        .post-card h3 a:hover { color: var(--cor-links); text-decoration: underline; }
+        
+        .post-card p { font-size: 14px; color: #334155; margin-bottom: 20px; flex-grow: 1; }
+
+        .btn-leia-mais {
+            display: inline-flex;
+            align-items: center;
+            background-color: var(--cor-primaria);
+            color: #ffffff !important;
+            padding: 10px 18px;
+            font-size: 12px;
+            font-weight: bold;
+            text-transform: uppercase;
+            text-align: center;
+            border: 1px solid rgba(0,0,0,0.1);
+            min-height: 44px;
+            border-radius: 4px;
+            transition: all 0.2s;
+        }
+        .btn-leia-mais:hover { background-color: var(--cor-foco); color: #000000 !important; text-decoration: none;}
+
+        /* Post Completo (Leitura) */
+        .single-post {
+            background-color: #ffffff;
+            padding: 40px;
+            border: 1px solid var(--cor-bordas);
+            border-top: 5px solid var(--cor-primaria);
+        }
+
+        .breadcrumb { font-size: 12px; color: #475569; margin-bottom: 20px; text-transform: uppercase; font-weight: bold;}
+        .breadcrumb a { color: var(--cor-links); }
+
+        .single-post h1 {
+            font-family: var(--fonte-titulos);
+            font-size: clamp(24px, 5vw, 38px);
+            color: var(--cor-texto-destaque);
+            margin-bottom: 15px;
+            line-height: 1.15;
+        }
+
+        .post-header-meta {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 13px;
+            color: #666;
+            border-bottom: 1px solid var(--cor-bordas);
+            padding-bottom: 15px;
+            margin-bottom: 25px;
+        }
+        .reading-time { font-weight: bold; color: var(--cor-primaria); }
+
+        .post-cover-image { width: 100%; object-fit: cover; margin-bottom: 30px; border: 1px solid #eee; aspect-ratio: 16/9; }
+
+        .post-body-text {
+            font-size: clamp(15px, 2.5vw, 17px);
+            color: #222;
+            line-height: 1.8;
+        }
+        .post-body-text p { margin-bottom: 20px; }
+        
+        .post-body-text h2 {
+            font-family: var(--fonte-titulos);
+            font-size: clamp(18px, 3.5vw, 24px);
+            color: var(--cor-texto-destaque);
+            margin-top: 40px;
+            margin-bottom: 15px;
+            border-left: 4px solid var(--cor-primaria);
+            padding-left: 15px;
+        }
+
+        .post-body-text ul, .post-body-text ol { margin-bottom: 20px; padding-left: 20px; }
+        .post-body-text li { margin-bottom: 10px; }
+        .post-body-text blockquote {
+            font-style: italic;
+            background: #f9f9f9;
+            border-left: 4px solid var(--cor-primaria);
+            padding: 15px 20px;
+            margin: 20px 0;
+            color: #555;
+        }
+
+        /* Área de Ações do Post (Like/Share) */
+        .post-actions {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 40px;
+            padding-top: 20px;
+            border-top: 1px solid var(--cor-bordas);
+        }
+
+        .btn-like {
+            background: none;
+            border: 2px solid var(--cor-bordas);
+            padding: 10px 20px;
+            font-size: 16px;
+            cursor: pointer;
+            font-weight: bold;
+            color: #555;
+            transition: all 0.2s;
+            min-height: 44px;
+            border-radius: 4px;
+        }
+        .btn-like:hover { border-color: var(--cor-primaria); color: var(--cor-primaria); }
+        .btn-like.liked {
+            background-color: var(--cor-primaria);
+            color: #ffffff;
+            border-color: var(--cor-primaria);
+        }
+
+        /* Caixa do Autor */
+        .author-box {
+            background-color: var(--cor-fundo-site);
+            border: 1px solid var(--cor-bordas);
+            padding: 25px;
+            margin-top: 40px;
+            display: flex;
+            gap: 20px;
+            align-items: center;
+        }
+        .author-avatar { width: 80px; height: 80px; border-radius: 50%; object-fit: cover; }
+        .author-info h4 { margin-bottom: 5px; color: var(--cor-texto-destaque); }
+        .author-info p { font-size: 14px; color: #555; margin-bottom: 0;}
+
+        /* Artigos Relacionados */
+        .related-posts { margin-top: 50px; }
+        .related-posts h3 { font-family: var(--fonte-titulos); font-size: 22px; color: var(--cor-texto-destaque); border-bottom: 2px solid var(--cor-primaria); padding-bottom: 10px; margin-bottom: 20px;}
+        
+        /* Widgets da Sidebar */
+        .widget {
+            background-color: #ffffff;
+            border: 1px solid var(--cor-bordas);
+            padding: 25px;
+            margin-bottom: 30px;
+        }
+
+        .widget-title {
+            font-size: 16px;
+            color: var(--cor-texto-destaque);
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid var(--cor-primaria);
+            text-transform: uppercase;
+            font-weight: bold;
+            letter-spacing: 0.5px;
+        }
+
+        .widget-search input {
+            width: 100%; padding: 12px; border: 1px solid #ccc;
+            margin-bottom: 10px; font-family: var(--fonte-padrao);
+            font-size: 14px; min-height: 44px; border-radius: 4px;
+        }
+        .widget-search button {
+            width: 100%; padding: 12px; background-color: var(--cor-primaria);
+            color: white; border: none; font-weight: bold; cursor: pointer; text-transform: uppercase;
+            font-size: 14px; min-height: 44px; border-radius: 4px; transition: background-color 0.2s;
+        }
+        .widget-search button:hover { background-color: var(--cor-texto-destaque); }
+
+        .widget-categories ul { list-style: none; }
+        .widget-categories li { border-bottom: 1px solid #eee; }
+        .widget-categories li:last-child { border-bottom: none; }
+        .widget-categories a {
+            color: #444; display: flex; justify-content: space-between; padding: 12px 0;
+            font-size: 14px; font-weight: bold; min-height: 44px; align-items: center;
+        }
+        .widget-categories a:hover { color: var(--cor-primaria); padding-left: 5px; text-decoration: none;}
+
+        .widget-newsletter { background-color: var(--cor-fundo-site); text-align: center; }
+        .widget-newsletter p { font-size: 13px; margin-bottom: 15px; color: #555; }
+        .widget-newsletter input { width: 100%; padding: 12px; margin-bottom: 10px; border: 1px solid #ccc; text-align: center; font-size: 14px; min-height: 44px; border-radius: 4px;}
+        .widget-newsletter button { width: 100%; padding: 12px; background: var(--cor-primaria); color: white; border: none; font-weight: bold; text-transform: uppercase; cursor: pointer; font-size: 14px; min-height: 44px; border-radius: 4px;}
+        .widget-newsletter button:hover { background: var(--cor-texto-destaque); }
+
+        /* Estilos para o Footer */
+        footer.site-footer {
+            background-color: var(--footer-bg, var(--cor-primaria));
+            color: #ffffff;
+            padding: 50px 0 0 0;
+            border-top: 5px solid var(--footer-accent, var(--cor-foco));
+        }
+        .footer-flex { display: flex; flex-wrap: wrap; gap: 30px; justify-content: space-between; margin-bottom: 40px; }
+        .footer-col { flex: 1; min-width: 250px; }
+        .footer-col h4 {
+            color: var(--footer-heading, #ffffff); font-size: 16px; margin-bottom: 20px;
+            text-transform: uppercase; letter-spacing: 1px;
+        }
+        .footer-col p, .footer-col ul { font-size: 14px; line-height: 1.8; color: var(--footer-text, #e2e8f0); }
+        .footer-col ul { list-style: none; }
+        .footer-col ul li { margin-bottom: 10px; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 5px;}
+        .footer-col a { color: var(--footer-link, #ffffff) !important; text-decoration: none;}
+        .footer-col a:hover { color: var(--footer-accent, var(--cor-foco)) !important; text-decoration: underline;}
+        
+        .logo-footer { margin-bottom: 15px; background-color: white; padding: 10px; max-width: 220px; border-radius: 6px; display: inline-block; }
+        .logo-footer img { max-height: 55px; width: auto; object-fit: contain; }
+        .footer-social-links { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 18px; }
+        .social-pill {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            background-color: rgba(255, 255, 255, 0.12);
+            color: #ffffff !important;
+            padding: 6px 14px;
+            border-radius: 20px;
+            font-size: 13px;
+            font-weight: 500;
+            transition: all 0.2s ease;
+            text-decoration: none !important;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+        .social-pill:hover {
+            background-color: var(--footer-accent, var(--cor-foco, #e63946));
+            color: #ffffff !important;
+            border-color: var(--footer-accent, var(--cor-foco, #e63946));
+            transform: translateY(-1px);
+        }
+        .social-pill i { font-size: 15px; color: var(--footer-accent, var(--cor-foco, #e63946)); }
+        .social-pill:hover i { color: #ffffff; }
+        .footer-bottom { background-color: rgba(0,0,0,0.3); text-align: center; padding: 20px; font-size: 12px; color: #cbd5e1; }
+
+        /* ── NORMALIZAÇÃO DE FOOTER TAILWIND (SCRAPED) ── */
+        footer.site-footer ul, 
+        footer.site-footer li, 
+        footer.site-footer .footer-links, 
+        footer.site-footer .footer-contact-info {
+            list-style: none !important;
+            list-style-type: none !important;
+            padding: 0 !important;
+            margin: 0 !important;
+        }
+
+        footer.site-footer .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 40px;
+            margin-bottom: 40px;
+        }
+
+        @media (max-width: 768px) {
+            footer.site-footer .grid {
+                grid-template-columns: 1fr;
+                gap: 30px;
+            }
+        }
+
+        footer.site-footer .flex {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        footer.site-footer .flex-wrap {
+            flex-wrap: wrap;
+        }
+
+        footer.site-footer .flex-col {
+            flex-direction: column;
+            align-items: stretch;
+        }
+
+        footer.site-footer .items-start {
+            align-items: flex-start;
+        }
+
+        footer.site-footer .justify-between {
+            justify-content: space-between;
+        }
+
+        footer.site-footer .gap-2 { gap: 8px; }
+        footer.site-footer .gap-3 { gap: 12px; }
+        footer.site-footer .gap-4 { gap: 16px; }
+        footer.site-footer .gap-16 { gap: 40px; }
+
+        footer.site-footer .mb-6 { margin-bottom: 24px; }
+        footer.site-footer .mb-16 { margin-bottom: 40px; }
+
+        footer.site-footer .text-xs { font-size: 12px; }
+        footer.site-footer .text-sm { font-size: 14px; }
+        footer.site-footer .text-lg { font-size: 18px; }
+        footer.site-footer .text-white { color: #ffffff !important; }
+        footer.site-footer .text-slate-500 { color: #9ca3af; }
+        
+        footer.site-footer .space-y-4 > * + * { margin-top: 16px; }
+        footer.site-footer .space-y-5 > * + * { margin-top: 20px; }
+
+        footer.site-footer .w-10 { width: 40px; }
+        footer.site-footer .h-10 { height: 40px; }
+        footer.site-footer .shrink-0 { flex-shrink: 0; }
+        
+        footer.site-footer .rounded-full {
+            border-radius: 50% !important;
+        }
+        
+        footer.site-footer .rounded-lg {
+            border-radius: 8px !important;
+        }
+
+        footer.site-footer .rounded-xl {
+            border-radius: 12px !important;
+        }
+
+        footer.site-footer .bg-primary\/10 {
+            background-color: rgba(230, 57, 70, 0.15);
+        }
+        
+        footer.site-footer .bg-green-500\/10 {
+            background-color: rgba(34, 197, 94, 0.15);
+        }
+
+        footer.site-footer .bg-emerald-950\/40 {
+            background-color: rgba(6, 78, 59, 0.4);
+            border: 1px solid rgba(16, 185, 129, 0.2);
+            color: #a7f3d0 !important;
+        }
+
+        footer.site-footer .border-emerald-500\/20 {
+            border-color: rgba(16, 185, 129, 0.2);
+        }
+
+        footer.site-footer .border-t {
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        footer.site-footer .pt-8 {
+            padding-top: 32px;
+        }
+
+        /* Botões no footer scraped — fix CTA/WhatsApp layout */
+        footer.site-footer button,
+        footer.site-footer .btn-cta,
+        footer.site-footer button[onclick^="abrirQuiz"],
+        footer.site-footer a[href*="wa.me"],
+        footer.site-footer a[href*="whatsapp"],
+        footer.site-footer a[class*="btn"],
+        footer.site-footer a[class*="button"] {
+            display: inline-flex !important;
+            align-items: center !important;
+            justify-content: center !important;
+            gap: 8px !important;
+            white-space: nowrap !important;
+            min-height: 44px;
+            padding: 10px 20px;
+            font-size: 14px;
+            font-weight: bold;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.2s;
+            text-decoration: none !important;
+            border: none;
+        }
+        footer.site-footer a[href*="wa.me"],
+        footer.site-footer a[href*="whatsapp"] {
+            background-color: #25D366 !important;
+            color: #ffffff !important;
+        }
+        footer.site-footer a[href*="wa.me"]:hover,
+        footer.site-footer a[href*="whatsapp"]:hover {
+            background-color: #1ebe59 !important;
+            color: #ffffff !important;
+        }
+        footer.site-footer a[href*="wa.me"] i,
+        footer.site-footer a[href*="whatsapp"] i {
+            font-size: 18px !important;
+            margin-right: 2px;
+        }
+
+        footer.site-footer a {
+            color: var(--footer-link, #d1d5db) !important;
+            transition: color 0.2s;
+        }
+        footer.site-footer a:hover {
+            color: var(--footer-accent, var(--cor-foco)) !important;
+            text-decoration: none;
+        }
+        footer.site-footer img {
+            max-width: 180px;
+            height: auto;
+            object-fit: contain;
+        }
+        /* Ícone WhatsApp inline não deve virar block */
+        footer.site-footer .flex i,
+        footer.site-footer i.fa-whatsapp,
+        footer.site-footer i.fa-instagram,
+        footer.site-footer i.fa-facebook {
+            display: inline !important;
+            vertical-align: middle;
+        }
+
+        /* Utilitários JS de Rota */
+        .view-section { display: none; }
+        .view-section.active { display: block; animation: fadeIn 0.4s; }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+
+        /* ============================================
+         * RESPONSIVIDADE — TABLET (≤850px)
+         * ============================================ */
+        @media (max-width: 850px) {
+            .content-wrapper { flex-direction: column; gap: 24px; margin-top: 20px; margin-bottom: 40px; }
+            .sidebar { width: 100%; }
+            .post-grid { grid-template-columns: 1fr; gap: 20px; }
+
+            .header-inner {
+                padding: 12px 0;
+                justify-content: space-between;
+                min-height: auto;
+            }
+
+            .menu-toggle { display: block; }
+
+            /* Navbar Mobile Suspensa */
+            .main-nav {
+                display: none;
+                position: absolute;
+                top: 100%;
+                left: 0;
+                right: 0;
+                background-color: var(--cor-fundo-destaque);
+                border-bottom: 2px solid var(--cor-primaria);
+                box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+                z-index: 999;
+                padding: 10px 20px;
+            }
+
+            .main-nav.open {
+                display: block;
+                animation: slideDownMenu 0.25s ease-out;
+            }
+
+            .main-nav ul {
+                flex-direction: column;
+                gap: 0;
+                width: 100%;
+            }
+
+            .main-nav a {
+                display: block;
+                padding: 14px 10px;
+                font-size: 15px;
+                border-bottom: 1px solid rgba(255,255,255,0.1);
+                min-height: 44px;
+                line-height: 1.2;
+            }
+
+            .main-nav li:last-child a { border-bottom: none; }
+
+            .main-nav a:hover, .main-nav a.active {
+                border-bottom: 1px solid rgba(255,255,255,0.1);
+                border-left: 3px solid var(--cor-primaria);
+                padding-left: 12px;
+                background-color: rgba(255,255,255,0.08);
+            }
+
+            .top-bar-inner {
+                flex-wrap: nowrap;
+                justify-content: space-between;
+                gap: 6px;
+            }
+
+            .top-bar-contato {
+                gap: 10px;
+            }
+
+            .post-header-meta { flex-direction: column; align-items: flex-start; gap: 10px; }
+            .single-post h1 { font-size: clamp(24px, 6vw, 32px); }
+            .single-post { padding: 24px; }
+            .ad-horizontal { height: auto; padding: 20px; max-width: 100%; }
+            .featured-content { padding: 20px; }
+            .featured-content h2 { font-size: clamp(22px, 5vw, 28px); }
+
+            /* Author box empilha */
+            .author-box { flex-direction: column; text-align: center; }
+            .author-avatar { margin: 0 auto; }
+        }
+
+        /* ============================================
+         * RESPONSIVIDADE — MOBILE (≤480px)
+         * ============================================ */
+        @media (max-width: 480px) {
+            .container { padding: 0 16px; }
+
+            /* Top bar: compacto, sem empilhar */
+            .top-bar { padding: 6px 0; font-size: 13px; }
+            .top-bar-contato { flex-direction: row; gap: 6px; align-items: center; flex-wrap: nowrap; }
+            .top-bar-contato .plantao-label,
+            .top-bar-contato span:not(.keep-mobile) { display: none; }
+            .top-bar-contato i { font-size: 14px; }
+            .top-bar-social a { font-size: 18px; min-width: 44px; min-height: 44px; display: inline-flex; align-items: center; justify-content: center; }
+
+            /* Logo maior no mobile */
+            .logo-container img { max-height: 50px; }
+
+            /* Botão hamburger confortável */
+            .menu-toggle {
+                font-size: 22px;
+                padding: 8px 12px;
+                min-width: 44px;
+                min-height: 44px;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+            }
+
+            /* Content wrapper */
+            .content-wrapper { gap: 20px; margin-top: 16px; margin-bottom: 30px; }
+
+            /* Featured post */
+            .featured-post { margin-bottom: 24px; }
+            .featured-img-container { height: 200px; }
+            .featured-content { padding: 16px; }
+            .featured-content h2 { font-size: clamp(20px, 5.5vw, 26px); margin-bottom: 10px; }
+            .featured-content p { font-size: 14px; margin-bottom: 16px; }
+
+            /* Post cards */
+            .post-card-img { height: 180px; }
+            .post-card-content { padding: 16px; }
+            .post-card h3 { font-size: 17px; }
+            .post-card p { font-size: 13px; }
+            .post-meta { font-size: 11px; }
+
+            /* Botão leia mais confortável */
+            .btn-leia-mais {
+                padding: 12px 16px;
+                font-size: 13px;
+                min-height: 44px;
+                display: inline-flex;
+                align-items: center;
+            }
+
+            /* Anúncios */
+            .ad-horizontal { height: auto; min-height: 60px; padding: 16px; font-size: 12px; margin: 20px 0; }
+            .ad-sidebar { height: 200px; }
+            .custom-ad { word-break: break-word; }
+
+            /* Single post / artigo */
+            .single-post { padding: 16px; border-top-width: 4px; }
+            .single-post h1 { font-size: clamp(22px, 6vw, 28px); line-height: 1.2; }
+            .breadcrumb { font-size: 11px; margin-bottom: 14px; word-break: break-word; }
+
+            /* Meta do post: empilha autor e data */
+            .post-header-meta {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 6px;
+                font-size: 13px;
+                padding-bottom: 12px;
+                margin-bottom: 16px;
+            }
+
+            .post-cover-image { margin-bottom: 20px; }
+
+            .post-body-text { font-size: 15px; line-height: 1.75; }
+            .post-body-text h2 { font-size: 20px; margin-top: 28px; margin-bottom: 12px; padding-left: 12px; }
+            .post-body-text blockquote { padding: 12px 14px; margin: 16px 0; font-size: 14px; }
+            .post-body-text ul, .post-body-text ol { padding-left: 16px; }
+
+            /* Ações do post */
+            .post-actions {
+                flex-direction: column;
+                gap: 12px;
+                align-items: stretch;
+                margin-top: 24px;
+                padding-top: 16px;
+            }
+            .btn-like {
+                min-height: 44px;
+                text-align: center;
+                padding: 12px;
+                font-size: 15px;
+            }
+            .post-actions > div { text-align: center; font-size: 14px; padding: 10px; }
+
+            /* Author box empilha */
+            .author-box {
+                flex-direction: column;
+                text-align: center;
+                padding: 20px 16px;
+                gap: 14px;
+            }
+            .author-avatar { width: 70px; height: 70px; margin: 0 auto; }
+            .author-info h4 { font-size: 15px; }
+            .author-info p { font-size: 13px; }
+
+            /* Related posts */
+            .related-posts { margin-top: 30px; }
+            .related-posts h3 { font-size: 18px; }
+
+            /* Sidebar widgets */
+            .widget { padding: 18px; margin-bottom: 20px; }
+            .widget-title { font-size: 14px; margin-bottom: 14px; }
+            .widget-search input { padding: 14px 12px; font-size: 14px; min-height: 44px; }
+            .widget-search button { padding: 14px; font-size: 14px; min-height: 44px; }
+            .widget-categories a { padding: 12px 0; font-size: 14px; min-height: 44px; align-items: center; }
+            .widget-newsletter p { font-size: 13px; line-height: 1.5; }
+            .widget-newsletter input { padding: 14px; font-size: 14px; min-height: 44px; }
+            .widget-newsletter button { padding: 14px; font-size: 14px; min-height: 44px; }
+
+            /* Footer */
+            .footer-flex { flex-direction: column; gap: 0; margin-bottom: 24px; }
+            .footer-col { min-width: unset; padding: 20px 0; border-bottom: 1px solid rgba(255,255,255,0.1); }
+            .footer-col:last-child { border-bottom: none; }
+            .footer-col h4 { font-size: 14px; margin-bottom: 14px; }
+            .footer-col p, .footer-col ul { font-size: 13px; line-height: 1.7; }
+            .footer-col ul li { padding-bottom: 8px; margin-bottom: 8px; }
+            .logo-footer { max-width: 160px; padding: 8px; margin-bottom: 12px; }
+            footer.site-footer { padding: 30px 0 0 0; }
+            .footer-bottom { font-size: 11px; padding: 16px; }
+        }
+
+        /* ============================================
+         * RESPONSIVIDADE — CELULAR PEQUENO (≤360px)
+         * ============================================ */
+        @media (max-width: 360px) {
+            .container { padding: 0 12px; }
+            .top-bar { font-size: 12px; }
+            .featured-img-container { height: 160px; }
+            .featured-content h2 { font-size: 19px; }
+            .post-card-img { height: 150px; }
+            .single-post h1 { font-size: 20px; }
+            .post-body-text { font-size: 14px; }
+            .widget { padding: 14px; }
+        }
+
+        @keyframes slideDownMenu {
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+    </style>
+<style>:root {
+            --footer-bg: #001a33;
+            --footer-accent: #e63946;
+            --footer-heading: #ffffff;
+            --footer-text: rgba(255,255,255,0.82);
+            --footer-link: rgba(255,255,255,0.88);
+          }</style>
+
+  <meta name="description" content="Entupiu? Ligou. Desentupidora 24h em Araguari - MG. Soluções rápidas e sem quebra para pias, ralos, fossas e esgotos.">
+  <meta name="robots" content="index, follow">
+  <meta name="author" content="JN Desentupidora Mundial">
+  <link rel="canonical" href="http://localhost:1337/blog/jn-desentupidora-mundial">
+  <!-- Open Graph -->
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="JN Desentupidora Mundial | Araguari - 24 Horas">
+  <meta property="og:description" content="Entupiu? Ligou. Desentupidora 24h em Araguari - MG. Soluções rápidas e sem quebra para pias, ralos, fossas e esgotos.">
+  <meta property="og:url" content="http://localhost:1337/blog/jn-desentupidora-mundial">
+  <meta property="og:image" content="https://jndesentupidoramundial.contrateagora.com/img/logo.webp">
+  <meta property="og:locale" content="pt_BR">
+  <!-- Twitter Card -->
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="JN Desentupidora Mundial | Araguari - 24 Horas">
+  <meta name="twitter:description" content="Entupiu? Ligou. Desentupidora 24h em Araguari - MG. Soluções rápidas e sem quebra para pias, ralos, fossas e esgotos.">
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"LocalBusiness","name":"JN Desentupidora Mundial","description":"Entupiu? Ligou. Desentupidora 24h em Araguari - MG. Soluções rápidas e sem quebra para pias, ralos, fossas e esgotos.","url":"http://localhost:1337/blog/jn-desentupidora-mundial","telephone":"(34) 98854-6421","email":"contato@jndesentupidora.com.br","address":{"@type":"PostalAddress","addressLocality":"s Atendidas em Araguari - MG","addressCountry":"BR"},"image":"https://jndesentupidoramundial.contrateagora.com/img/logo.webp","sameAs":["https://www.instagram.com/desentupidorajnmundial/"],"contactPoint":{"@type":"ContactPoint","telephone":"34988546421","contactType":"customer service","contactOption":"TollFree","availableLanguage":"Portuguese"}}</script>
+</head>
+<body>
+
+    <div class="top-bar">
+        <div class="container top-bar-inner">
+            <div class="top-bar-contato">
+                <span class="keep-mobile"><i class="fa-solid fa-phone"></i> <span class="plantao-label">Contato: </span><strong>(34) 98854-6421</strong></span>
+                <span><i class="fa-solid fa-location-dot"></i> s Atendidas em Araguari - MG</span>
+            </div>
+            <div class="top-bar-social">
+                <a href="https://www.instagram.com/desentupidorajnmundial/" target="_blank" rel="noopener" title="Instagram"><i class="fa-brands fa-instagram"></i></a><a href="https://wa.me/555534988546421" target="_blank" rel="noopener" title="WhatsApp"><i class="fa-brands fa-whatsapp"></i></a>
+            </div>
+        </div>
+    </div>
+
+    <header class="site-header">
+        <div class="container header-inner">
+            <div class="logo-container">
+                <a href="#home">
+                    <img src="https://jndesentupidoramundial.contrateagora.com/img/logo.webp" alt="JN Desentupidora Mundial" width="200" height="60">
+                </a>
+            </div>
+            <button class="menu-toggle" id="menuToggleBtn" onclick="toggleMobileMenu()">☰</button>
+            <nav class="main-nav" id="mainNav">
+                <ul>
+                    <li><a href="#home" class="nav-link">Página Inicial</a></li>
+                    <li><a href="#home" class="nav-link">Caça Vazamento</a></li>
+                    <li><a href="#home" class="nav-link">Desentupimento</a></li>
+                    <li><a href="#home" class="nav-link">Contato 24h</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <div class="container content-wrapper">
+        
+        <main class="main-content">
+            
+            <!-- ROUTE: HOME -->
+            <div id="route-home" class="view-section active">
+                <h1 class="sr-only">JN Desentupidora Mundial | Araguari - 24 Horas</h1>
+                
+                <!-- Anúncio Horizontal (Sua Publicidade) -->
+                <a href="#" class="custom-ad ad-horizontal">
+                    [Espaço Publicitário 728x90] Anuncie Seu Produto Aqui
+                </a>
+
+                <article class="featured-post">
+                    <div class="featured-img-container">
+                        <img src="https://placehold.co/800x400/08499a/FFC700?text=Caca+Vazamento+com+Geofone" alt="Caça Vazamento com Geofone" width="800" height="400">
+                    </div>
+                    <div class="featured-content">
+                        <div class="post-meta">
+                            <span class="categoria">Caça Vazamento</span> | 12 de Agosto
+                        </div>
+                        <h2><a href="#post-1">Como identificar vazamentos ocultos com geofone — sem quebrar piso nem parede</a></h2>
+                        <p>Conta de água alta, manchas no teto ou piso fofo? O geofone eletrônico localiza o ponto exato do vazamento sem destruição. Entenda o método e quando chamar o técnico.</p>
+                        <a href="#post-1" class="btn-leia-mais">Ler Guia Completo &raquo;</a>
+                    </div>
+                </article>
+
+                <div class="post-grid">
+                    <article class="post-card">
+                        <div class="post-card-img">
+                            <img src="https://placehold.co/400x250/0f172a/FFC700?text=Conta+de+Agua+Alta" alt="Conta de Água Alta" width="400" height="250" loading="lazy">
+                        </div>
+                        <div class="post-card-content">
+                            <div class="post-meta">
+                                <span class="categoria">Relatório Técnico</span> | 05 Ago
+                            </div>
+                            <h3><a href="#post-2">Conta de água alta? Como o relatório técnico ajuda no abatimento da Sabesp</a></h3>
+                            <p>Vazamento invisível pode inflar a fatura em centenas de reais. O laudo técnico com geofone é o documento exigido para solicitar abatimento.</p>
+                            <a href="#post-2" class="btn-leia-mais">Ler Artigo</a>
+                        </div>
+                    </article>
+
+                    <article class="post-card">
+                        <div class="post-card-img">
+                            <img src="https://placehold.co/400x250/1a1a1a/25D366?text=Desentupimento+24h" alt="Desentupimento" width="400" height="250" loading="lazy">
+                        </div>
+                        <div class="post-card-content">
+                            <div class="post-meta">
+                                <span class="categoria">Desentupimento</span> | 28 Jul
+                            </div>
+                            <h3><a href="#post-3">Desentupimento de pia, vaso e esgoto: quando chamar o profissional</a></h3>
+                            <p>Gordura, cabelo e raízes de árvore. Saiba o que resolve em casa e o que exige equipamento profissional sem sujeira.</p>
+                            <a href="#post-3" class="btn-leia-mais">Ler Artigo</a>
+                        </div>
+                    </article>
+                </div>
+
+            </div>
+
+            <!-- ROUTE: SINGLE POST -->
+            <div id="route-post" class="view-section single-post">
+                
+                <div class="breadcrumb">
+                    <a href="#home">Início</a> &raquo; <a href="#home">Destaque Editorial</a> &raquo; Notícia
+                </div>
+
+                <h1 id="post-title">Como identificar vazamentos ocultos com geofone — sem quebrar piso nem parede</h1>
+
+                <div class="post-header-meta">
+                    <div>
+                        Por <strong>Equipe Técnica</strong> | Publicado em 12 de Agosto de 2026
+                    </div>
+                    <div class="reading-time" id="reading-time">
+                        <i class="fa-regular fa-clock"></i> Calculando...
+                    </div>
+                </div>
+
+                <img src="https://placehold.co/800x400/08499a/FFC700?text=Geofone+Eletronico" alt="Geofone Eletrônico" class="post-cover-image" width="800" height="400" loading="lazy">
+
+                <div class="post-body-text" id="post-body-text">
+                    <p>Vazamentos ocultos são o terror silencioso de qualquer imóvel. Diferente de uma torneira pingando, as microfissuras em tubulações embutidas operam sem barulho visível — saturando a alvenaria, inflando a conta de água e comprometendo a estrutura ao longo de meses.</p>
+
+                    <blockquote>"Mais de 40% dos custos não programados em condomínios vêm de vazamentos e entupimentos que poderiam ser detectados cedo com equipamento profissional."</blockquote>
+
+                    <h2>1. Teste do hidrômetro: o primeiro indício</h2>
+                    <p>Feche todos os registros e torneiras. O medidor de água deve parar. Se continuar girando, há perda de pressão no sistema — sinal clássico de vazamento oculto. Anote a leitura e confira de novo em 1 hora.</p>
+
+                    <a href="#" class="custom-ad ad-horizontal" style="margin: 40px 0;">
+                        [Espaço Publicitário] Solicite Orçamento de Caça Vazamento
+                    </a>
+
+                    <h2>2. Sinais físicos na alvenaria</h2>
+                    <p>A água busca o caminho de menor resistência. Fique atento a:</p>
+                    <ul>
+                        <li><strong>Manchas e eflorescência:</strong> pó branco nas paredes (reação da água com o cimento).</li>
+                        <li><strong>Piso fofo ou azulejo solto:</strong> umidade sob o revestimento.</li>
+                        <li><strong>Mofo e mau cheiro:</strong> fungos em rodapés e cantos úmidos.</li>
+                        <li><strong>Conta de água disparada:</strong> aumento sem mudança de consumo.</li>
+                    </ul>
+
+                    <h2>3. Geofone: detecção sem quebra</h2>
+                    <p>Quebrar piso à toa é caro e desnecessário. O geofone eletrônico capta o som ultrassônico da água escapando pela fissura e aponta o ponto milimétrico do vazamento. Depois, o reparo é cirúrgico — com emissão de relatório técnico para abatimento junto à concessionária.</p>
+
+                    <p><em>Precisa de atendimento? Ligue ou chame no WhatsApp — plantão 24h em Diadema e ABC Paulista.</em></p>
+                </div>
+
+                <!-- Interações do Post -->
+                <div class="post-actions">
+                    <button class="btn-like" id="btn-like" onclick="handleLike()">
+                        <i class="fa-regular fa-thumbs-up"></i> Útil (<span id="like-count">87</span>)
+                    </button>
+                    <div style="font-size: 14px; font-weight: bold; color: #666;">
+                        <i class="fa-solid fa-share-nodes"></i> Compartilhar Artigo
+                    </div>
+                </div>
+
+                <!-- Caixa do Autor -->
+                <div class="author-box">
+                    <img src="https://placehold.co/100x100/08499a/FFC700?text=TT" alt="Autor" class="author-avatar">
+                    <div class="author-info">
+                        <h4>Equipe Técnica — Caça Vazamento & Desentupimento</h4>
+                        <p>Conteúdo elaborado por técnicos de campo com geofone, câmera endoscópica e experiência em Diadema e ABC Paulista.</p>
+                    </div>
+                </div>
+
+                <!-- Posts Relacionados -->
+                <div class="related-posts">
+                    <h3>Leia também</h3>
+                    <div class="post-grid">
+                        <article class="post-card">
+                            <div class="post-card-content">
+                                <h3><a href="#post-4">Infiltração no teto: 5 causas e como localizar a origem</a></h3>
+                                <p>Mancha no teto nem sempre é telhado. Pode ser cano estourado no andar de cima.</p>
+                            </div>
+                        </article>
+                        <article class="post-card">
+                            <div class="post-card-content">
+                                <h3><a href="#post-5">Desentupimento de caixa de gordura: quando limpar e o que evitar</a></h3>
+                                <p>Soda cáustica piora. Limpeza profissional esgota o resíduo sem danificar a rede.</p>
+                            </div>
+                        </article>
+                    </div>
+                </div>
+
+            </div>
+
+        </main>
+
+        <aside class="sidebar">
+            
+            <div class="widget widget-search">
+                <h3 class="widget-title">Arquivo de Artigos</h3>
+                <input type="text" placeholder="Pesquisar termo técnico...">
+                <button type="button"><i class="fa-solid fa-magnifying-glass"></i> Pesquisar</button>
+            </div>
+
+            <!-- Banners Quadrados (Sua Publicidade) -->
+            <a href="#" class="custom-ad ad-sidebar">
+                Banner Publicitário 300x250
+            </a>
+
+            <div class="widget widget-categories">
+                <h3 class="widget-title">Temas</h3>
+                <ul>
+                    <li><a href="#home"><span>Caça Vazamento</span> <span>(12)</span></a></li>
+                    <li><a href="#home"><span>Desentupimento</span> <span>(09)</span></a></li>
+                    <li><a href="#home"><span>Infiltração e Umidade</span> <span>(07)</span></a></li>
+                    <li><a href="#home"><span>Relatório Técnico</span> <span>(05)</span></a></li>
+                    <li><a href="#home"><span>Equipamentos</span> <span>(04)</span></a></li>
+                </ul>
+            </div>
+
+            <div class="widget widget-newsletter">
+                <h3 class="widget-title">Dicas Rápidas</h3>
+                <p>Receba alertas de prevenção de vazamento e dicas de manutenção hidráulica.</p>
+                <input type="email" placeholder="Seu e-mail">
+                <button type="button">Receber Dicas</button>
+            </div>
+
+        </aside>
+
+    </div>
+
+    <footer class="site-footer"><div class="container footer-flex">
+            <div class="footer-col marca">
+                <img src="https://jndesentupidoramundial.contrateagora.com/img/logo.webp" alt="JN Mundial" width="180" height="auto" loading="lazy" class="logo-footer">
+                <p>Soluções rápidas e limpas em desentupimento residencial e industrial em Araguari e região.</p>
+                <div class="social-links">
+                    <a href="https://www.instagram.com/desentupidorajnmundial/" target="_blank" class="insta-link">Instagram</a>
+                    <a href="https://www.instagram.com/desentupidorajnmundial/" target="_blank" class="google-link">⭐ Google Meu Negócio</a>
+                </div>
+            </div>
+
+            <div class="footer-col links">
+                <h4>Nossos Serviços</h4>
+                <ul>
+                    <li><a href="#servicos">Desentupimento de Esgoto</a></li>
+                    <li><a href="#servicos">Limpeza de Caixa de Gordura</a></li>
+                    <li><a href="#servicos">Hidrojateamento</a></li>
+                    <li><a href="#servicos">Pias e Ralos</a></li>
+                </ul>
+            </div>
+
+            <div class="footer-col contato">
+                <h4>Atendimento 24h</h4>
+                <p class="footer-contato-item">📍 Rua Amazonas 470, Araguari - MG</p>
+                <p class="footer-contato-item">
+                    <a href="tel:+5534988546421" class="footer-contato-link" onclick="dataLayer.push({'event': 'clique_chamada_telefonica'})">📞 (34) 98854-6421</a>
+                </p>
+                <p class="footer-contato-item">✉️ contato@jndesentupidora.com.br</p>
+            </div>
+
+            <div class="footer-col mapa">
+                <h4>Nossa Localização</h4>
+                <div style="border-radius: 8px; overflow: hidden; margin-top: 10px; box-shadow: 0 4px 15px rgba(0,0,0,0.2); background: #001a33;">
+                    <iframe title="Mapa de Localização e Conteúdo Mídia" src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3783.332827103447!2d-48.196395!3d-18.644485!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x94a5e0b6b2a0c8b3%3A0x6b4f7b2e8a1f8b4!2sR.%20Amazonas%2C%20470%20-%20Araguari%2C%20MG%2C%2038440-000!5e0!3m2!1spt-BR!2sbr!4v1700000000000!5m2!1spt-BR!2sbr" width="100%" height="160" style="border:0;" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
+                </div>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>© 2026 JN Desentupidora Mundial. Todos os direitos reservados.</p>
+        </div></footer>
+
+    <script>
+        /* =========================================
+         * LÓGICA DE FUNCIONAMENTO DO BLOG
+         * ========================================= */
+
+        const routeHome = document.getElementById('route-home');
+        const routePost = document.getElementById('route-post');
+        const navLinks = document.querySelectorAll('.nav-link');
+
+        // Lógica Dinâmica para Posts Reais do CRM
+        if (window.BLOG_POSTS && window.BLOG_POSTS.length > 0) {
+            renderRealPosts();
+        } else {
+            renderEmptyPostsState();
+        }
+
+        function renderEmptyPostsState() {
+            const routeHome = document.getElementById('route-home');
+            if (routeHome) {
+                routeHome.innerHTML = `
+                    <div style="background:#ffffff;border:1px solid var(--cor-bordas);border-radius:8px;padding:60px 20px;text-align:center;margin-top:20px;box-shadow:0 2px 8px rgba(0,0,0,0.04)">
+                        <div style="font-size:48px;margin-bottom:15px;color:var(--cor-primaria)"><i class="fa-regular fa-newspaper"></i></div>
+                        <h2 style="font-family:var(--fonte-titulos);font-size:24px;color:var(--cor-texto-destaque);margin-bottom:10px">Nenhum artigo publicado ainda</h2>
+                        <p style="font-size:15px;color:#666;max-width:500px;margin:0 auto">Os posts criados para este cliente no painel do CRM aparecerão aqui automaticamente assim que forem publicados.</p>
+                    </div>
+                `;
+            }
+            const categoriesWidget = document.querySelector('.widget-categories ul');
+            if (categoriesWidget) {
+                categoriesWidget.innerHTML = '<li style="padding:15px 0;color:#888;font-size:13px">Nenhum artigo publicado</li>';
+            }
+        }
+
+        function renderRealPosts() {
+            const posts = window.BLOG_POSTS;
+            const routeHome = document.getElementById('route-home');
+            const featured = posts[0];
+            const gridPosts = posts.slice(1);
+            let homeHtml = '';
+
+            homeHtml += `
+                <a href="#" class="custom-ad ad-horizontal">
+                    [Espaço Publicitário 728x90] Anuncie Aqui
+                </a>
+            `;
+
+            const featDate = new Date(featured.published_at || featured.created_at).toLocaleDateString('pt-BR', {day:'2-digit', month:'long'});
+            const featImg = featured.imagem_url || `https://placehold.co/800x450/001a33/ffffff?text=${encodeURIComponent(featured.title)}`;
+            homeHtml += `
+                <article class="featured-post">
+                    <div class="featured-img-container">
+                        <img src="${featImg}" alt="${featured.title}" width="800" height="450" fetchpriority="high">
+                    </div>
+                    <div class="featured-content">
+                        <div class="post-meta">
+                            <span class="categoria">Destaque</span> | ${featDate}
+                        </div>
+                        <h2><a href="#post-${featured.slug}">${featured.title}</a></h2>
+                        <p>${featured.content.replace(/<[^>]*>/g, '').substring(0, 180)}...</p>
+                        <a href="#post-${featured.slug}" class="btn-leia-mais">Ler Relatório Completo &raquo;</a>
+                    </div>
+                </article>
+            `;
+
+            if (gridPosts.length > 0) {
+                homeHtml += '<div class="post-grid">';
+                gridPosts.forEach(p => {
+                    const pDate = new Date(p.published_at || p.created_at).toLocaleDateString('pt-BR', {day:'2-digit', month:'short'});
+                    const cardImg = p.imagem_url || `https://placehold.co/400x250/222222/cccccc?text=${encodeURIComponent(p.title)}`;
+                    homeHtml += `
+                        <article class="post-card">
+                            <div class="post-card-img">
+                                <img src="${cardImg}" alt="${p.title}" width="400" height="250" loading="lazy">
+                            </div>
+                            <div class="post-card-content">
+                                <div class="post-meta">
+                                    <span class="categoria">Artigo</span> | ${pDate}
+                                </div>
+                                <h3><a href="#post-${p.slug}">${p.title}</a></h3>
+                                <p>${p.content.replace(/<[^>]*>/g, '').substring(0, 120)}...</p>
+                                <a href="#post-${p.slug}" class="btn-leia-mais">Ler Notícia</a>
+                            </div>
+                        </article>
+                    `;
+                });
+                homeHtml += '</div>';
+            }
+
+            routeHome.innerHTML = homeHtml;
+
+            const categoriesWidget = document.querySelector('.widget-categories ul');
+            if (categoriesWidget) {
+                categoriesWidget.innerHTML = posts.slice(0, 5).map(p => `
+                    <li><a href="#post-${p.slug}"><span>${p.title.substring(0, 30)}...</span></a></li>
+                `).join('');
+                const titleWidget = document.querySelector('.widget-categories .widget-title');
+                if (titleWidget) titleWidget.textContent = 'Artigos Recentes';
+            }
+        }
+
+        function handleRouting() {
+            const hash = window.location.hash || '#home';
+
+            routeHome.classList.remove('active');
+            routePost.classList.remove('active');
+
+            navLinks.forEach(link => {
+                link.classList.remove('active');
+                if(link.getAttribute('href') === hash) {
+                    link.classList.add('active');
+                }
+            });
+            if(hash.startsWith('#post')) navLinks[0].classList.add('active');
+
+            if (hash.startsWith('#post')) {
+                routePost.classList.add('active');
+
+                if (window.BLOG_POSTS && window.BLOG_POSTS.length > 0) {
+                    const slug = hash.replace('#post-', '');
+                    const post = window.BLOG_POSTS.find(p => p.slug === slug || String(p.id) === slug);
+                    if (post) {
+                        document.getElementById('post-title').textContent = post.title;
+                        const coverImg = document.querySelector('.post-cover-image');
+                        if (coverImg) {
+                            if (post.imagem_url) {
+                                coverImg.src = post.imagem_url;
+                                coverImg.alt = post.title;
+                                coverImg.style.display = 'block';
+                            } else {
+                                coverImg.style.display = 'none';
+                            }
+                        }
+
+                        const pDate = new Date(post.published_at || post.created_at).toLocaleDateString('pt-BR', {day:'2-digit', month:'long', year:'numeric'});
+                        const metaContainer = document.querySelector('.post-header-meta div');
+                        if (metaContainer) {
+                            metaContainer.innerHTML = `Por <strong>Redação Editorial</strong> | Publicado em ${pDate}`;
+                        }
+
+                        // Remove imagem duplicada se ela já vier no início de post.content
+                        let cleanContent = post.content || '';
+                        cleanContent = cleanContent.replace(/^\s*<figure[^>]*>[\s\S]*?<\/figure>\s*/i, '');
+                        cleanContent = cleanContent.replace(/^\s*<img[^>]*>\s*/i, '');
+
+                        document.getElementById('post-body-text').innerHTML = cleanContent;
+
+                        const relatedGrid = document.querySelector('.related-posts .post-grid');
+                        if (relatedGrid) {
+                            const related = window.BLOG_POSTS.filter(p => p.id !== post.id).slice(0, 2);
+                            relatedGrid.innerHTML = related.map(p => `
+                                <article class="post-card">
+                                    <div class="post-card-content">
+                                        <h3><a href="#post-${p.slug}">${p.title}</a></h3>
+                                    </div>
+                                </article>
+                            `).join('');
+                        }
+                    }
+                }
+
+                calculateReadingTime();
+            } else {
+                routeHome.classList.add('active');
+            }
+
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        window.addEventListener('hashchange', () => {
+            handleRouting();
+            closeMobileMenu();
+        });
+        window.addEventListener('load', handleRouting);
+
+        // Lógica de Toggle do Menu Mobile
+        function toggleMobileMenu() {
+            const nav = document.getElementById('mainNav');
+            const btn = document.getElementById('menuToggleBtn');
+            if (nav.classList.contains('open')) {
+                nav.classList.remove('open');
+                btn.innerHTML = '☰';
+            } else {
+                nav.classList.add('open');
+                btn.innerHTML = '✕';
+            }
+        }
+
+        function closeMobileMenu() {
+            const nav = document.getElementById('mainNav');
+            const btn = document.getElementById('menuToggleBtn');
+            if (nav) nav.classList.remove('open');
+            if (btn) btn.innerHTML = '☰';
+        }
+
+        function calculateReadingTime() {
+            const textContainer = document.getElementById('post-body-text');
+            if(!textContainer) return;
+
+            const text = textContainer.innerText || textContainer.textContent;
+            const wordCount = text.trim().split(/\s+/).length;
+            const wordsPerMinute = 200;
+            const readingTimeMinutes = Math.ceil(wordCount / wordsPerMinute);
+
+            const timeElement = document.getElementById('reading-time');
+            timeElement.innerHTML = `<i class="fa-regular fa-clock"></i> Tempo estimado: ${readingTimeMinutes} min de leitura`;
+        }
+
+        let isLiked = false;
+        let baseLikes = 87;
+
+        function handleLike() {
+            const btn = document.getElementById('btn-like');
+            isLiked = !isLiked;
+            if(isLiked) {
+                btn.classList.add('liked');
+                btn.innerHTML = `<i class="fa-solid fa-thumbs-up"></i> Marcado como Útil (<span id="like-count">${baseLikes + 1}</span>)`;
+            } else {
+                btn.classList.remove('liked');
+                btn.innerHTML = `<i class="fa-regular fa-thumbs-up"></i> Curtir (<span id="like-count">${baseLikes}</span>)`;
+            }
+        }
+    </script>
+</body>
+</html>

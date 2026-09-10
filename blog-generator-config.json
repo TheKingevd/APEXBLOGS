@@ -1,0 +1,75 @@
+{
+  "contexto_do_sistema": {
+    "papel": "Engenheiro Full Stack + Especialista UI/UX",
+    "objetivo": "Analisar site do cliente (via /api/analyze + URL) e gerar blog + painel admin herdados da identidade visual do site alvo. Sem reaproveitar dados/cores de projetos anteriores.",
+    "stack_alvo": "Express + puppeteer + sqlite3. Endpoint /api/analyze ja existe (extrai cssVars, headerBg, primaryColor, logo, whatsapp, localizacao, footerHtml). DB clients tem campos: cor_primaria, cor_fundo, cor_titulo, logo, fonte, whatsapp, localizacao, seo_titulo, seo_descricao, footer_html.",
+    "template_raiz_blog": "blog-base.html (tokens {{VAR}} injetados pelo server.js /blog/:slug via regex no :root e placeholders).",
+    "template_raiz_admin": "dashboard.html (painel CRM)."
+  },
+  "fase_1_extracao_de_identidade": {
+    "metodo": "Deterministico via /api/analyze (puppeteer+cheerio). NAO chutar cor olhando print.",
+    "fluxo": ["1. POST /api/analyze?url=SITE&client_id=N -> puppeteer visita SITE, extrai design system e auto-salva no DB.", "2.json Cliente atualizado: cor_primaria, cor_fundo, cor_titulo, logo, fonte, whatsapp, localizacao, footer_html.", "3. Validar campos criticos: se logo=null ou === 'Nao encontrado', usar placehold.co com nome do cliente. Se cor_primaria=null, fallback #FFC700."],
+    "cores": {
+      "primaria": "cor_primaria do DB = accent/CTA do site (idido botao principal). /api/analyze ja mapeia: vars['--secondary-color']||vars['--action-color']||designSystem.primaryColor.",
+      "fundo": "cor_fundo do DB = headerBg/heroBg escuro. /api/analyze: designSystem.headerBg||vars['--primary-color']||heroBg.",
+      "titulo": "cor_titulo do DB = branco (#ffffff) por padrao (texto sobre fundo escuro).",
+      "proibicao": "NUNCA usar hardcoded de exemplos anteriores. Toda cor vem do DB do cliente atual."
+    },
+    "branding": {
+      "logo": "logo do DB (URL absoluta). Se relativa, /api/analyze ja converte com new URL(logo, origin). Validar carga no blog (naturalHeight>0).",
+      "tipografia": "fonte do DB = bodyFont do site. Server injeta em --fonte-padrao e --fonte-titulos. Fallback: Georgia serif + Helvetica sans-serif."
+    },
+    "contato": {
+      "whatsapp": "whatsapp do DB. /api/analyze prioriza: JS inline -> link wa.me -> regex texto. Sanitizar so digitos para wa.me/55XXXXXXXXXXX.",
+      "localizacao": "localizacao do DB. /api/analyze prioriza: geo meta -> area de cobertura -> regex descricao -> footer endereco."
+    }
+  },
+  "fase_2_geracao_do_blog": {
+    "template": "blog-base.html. Renderizado por server.js /blog/:slug. NAO reescrever template do zero - editar blog-base.html.",
+    "css_variaveis": "Server ja injeta cores do DB no :root via regex. Template so usa var(--cor-primaria), var(--cor-fundo-destaque), var(--cor-texto-destaque). Proibido hex direto no CSS exceto #fff/#000/#222.",
+    "header": {
+      "topbar": "Fundo var(--cor-fundo-destaque), border-bottom 3px var(--cor-primaria). Contatos esquerda, social direita.",
+      "navbar": "Fundo var(--cor-fundo-destaque), border-bottom var(--cor-primaria). Links brancos, hover var(--cor-primaria). Menu hamburger mobile (azul escuro, nao branco)."
+    },
+    "footer": {
+      "regra": "Herdar visual (cores + logo + tipografia) do site alvo. NAO clonar DOM/imagens protegidas - Adaptar.",
+      "fonte_dados": "footer_html do DB se valido. CUIDADO: /api/analyze pode truncar markup (tags sem <, paths relativos, funcoes inexistentes).",
+      "sanitizacao_obrigatoria": ["Se footer_html do DB tiver tag sem opening <, descartar e usar template generico do blog-base.", "Paths de imagem relativos (ex: assets/img/x.png) viram 404 - converter para logo absoluto do DB ou placehold.co.", "Funcoes JS do original (ex: diretoParaWhatsApp) inexistentes no blog - substituir por links wa.me diretos.", "Se duvida, reescrever footer_html no DB com markup valido + classes do template + icones Font Awesome."]
+    },
+    "cards_de_post": {
+      "botao_ler": "btn-leia-mais: bg var(--cor-primaria), texto escuro (#000 se amarelo, #fff se escuro). Hover: bg var(--cor-fundo-destaque), texto var(--cor-texto-destaque).",
+      "hover_card": "escala sutil 1.05 na imagem. Border-bottom do card em var(--cor-primaria)."
+    }
+  },
+  "fase_3_painel_admin": {
+    "template": "dashboard.html. Editar, nao reescrever.",
+    "tema": "AMOLED premium. Cards: #1a1a1a sobre fundo #000. Acentos: var(--cor-primaria) do cliente (NAO fixo amarelo).",
+    "layout": "Grids estruturados, alinhamento perfeito. Sem flat/brutalista. Classico e estruturado.",
+    "responsividade": {
+      "tables": "overflow-x: auto em mobile. Ou transformar table em cards empilhados (<768px).",
+      "sidebar": "Recolher em hamburger suave <768px. Mesma cor do tema (escuro).",
+      "alvo_toque": "min 44px em botoes/menu mobile.",
+      "overflow_horizontal": "ZERO no painel admin mobile."
+    }
+  },
+  "fase_4_padroes_de_codigo": {
+    "controle_fluxo": {
+      "regra": "Early-return com guard clauses: if (!x) return erro. Evitar if/else aninhado profundo (max 2 niveis).",
+      "switch": "Usar switch-case para dispatch de rotas/menus/estados discretos. NAO forcar switch em ranges/tipos/guards/validacao - if resolve melhor.",
+      "proibido": "switch(true){ case x > 768 } anti-pattern. if/else aninhado >2 niveis."
+    },
+    "comentarios": {
+      "permitido": "Comentario explicando o PORQUE (decisao, tradeoff, workaround, limitacao). Ex: // fallback se logo ausente - placehold.co evita 404.",
+      "proibido": "Comentario que repete o que codigo faz. Ex: // incrementa contador (lixo).",
+      "ponytail": "Marcar simplificacao deliberada com ponytail: nome limite + upgrade path. Ex: // ponytail: regex fragil, trocar por parser quando 3+ clientes."
+    },
+    "semantica": "HTML5 semantico: <header>, <nav>, <main>, <aside>, <footer>, <article>. Evitar aninhamento >4 niveis de <div>."
+  },
+  "instrucao_de_execucao": {
+    "passo_1": "Receber URL do cliente. Rodar POST /api/analyze?url=URL&client_id=N (ou usar cliente ja analisado no DB).",
+    "passo_2": "Confirmar paleta extraida em HEX (cor_primaria, cor_fundo, cor_titulo) + nicho + logo URL.",
+    "passo_3": "Editar blog-base.html aplicando var(--cor-*) herdados. Validar footer_html do DB - sanear se quebrado.",
+    "passo_4": "Validar: node server.js + puppeteer 320px/768px/1024px - zero overflow, navbar cores, footer logo carrega, sem 404/403.",
+    "passo_5": "Antes de finalizar, abrir /blog/:slug no browser e conferir visual real contra paleta confirmada."
+  }
+}

@@ -1,0 +1,3805 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Blog CRM — Painel</title>
+<meta name="robots" content="noindex">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@500;600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+<style>
+/* ══════════════════════════════════════════════════════════════════════════════
+   TOKENS — Carbon & Cobalt Blue Enterprise Design System (100% Non-AI)
+   ══════════════════════════════════════════════════════════════════════════════ */
+
+/* ══════════════════════════════════════════════════════════════════════════════
+   LIQUID GLASS & DARK CYBER-LUXURY (COBALT BLUE BASE)
+   ══════════════════════════════════════════════════════════════════════════════ */
+:root {
+  /* Base surfaces — OLED Pure Black & Deep Obsidian */
+  --bg:          #000000;
+  --bg2:         #070709;
+  --surface:     rgba(13, 13, 16, 0.72);
+  --surface2:    rgba(22, 22, 28, 0.85);
+  --surface3:    rgba(30, 30, 38, 0.90);
+  --surface-elevated: rgba(18, 18, 23, 0.92);
+  --border:      rgba(255, 255, 255, 0.10);
+  --border2:     rgba(255, 255, 255, 0.18);
+  --border-glow: rgba(37, 99, 235, 0.40);
+
+  /* Signature primary: Electric Cobalt Blue */
+  --ink:         #2563eb;
+  --ink-hover:   #1d4ed8;
+  --ink-soft:    rgba(37, 99, 235, 0.15);
+  --ink-glow:    rgba(37, 99, 235, 0.35);
+  --ink-specular:rgba(255, 255, 255, 0.25);
+
+  /* Semantic */
+  --emerald:     #10b981;
+  --emerald-s:   rgba(16, 185, 129, 0.14);
+  --amber:       #f59e0b;
+  --amber-s:     rgba(245, 158, 11, 0.14);
+  --rose:        #ef4444;
+  --rose-s:      rgba(239, 68, 68, 0.14);
+  --sky:         #38bdf8;
+  --sky-s:       rgba(56, 189, 248, 0.14);
+
+  /* Text */
+  --text:        #ffffff;
+  --text2:       #a1a1aa;
+  --text3:       #71717a;
+
+  /* Layout */
+  --sidebar-w:   264px;
+  --topbar-h:    60px;
+
+  /* Radius */
+  --radius:      14px;
+  --radius-sm:   8px;
+  --radius-lg:   18px;
+  --radius-xl:   22px;
+  --radius-2xl:  28px;
+
+  /* Typography */
+  --font-sans:   "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  --font-heading:"Plus Jakarta Sans", "Barlow Condensed", sans-serif;
+
+  /* Glass Shadow Stack */
+  --glass-shadow: inset 0 1px 0 0 rgba(255, 255, 255, 0.16), 0 20px 40px -15px rgba(0, 0, 0, 0.85);
+  --glass-shadow-hover: inset 0 1px 0 0 rgba(255, 255, 255, 0.28), 0 25px 50px -12px rgba(0, 0, 0, 0.95), 0 0 25px rgba(37, 99, 235, 0.15);
+}
+
+/* Glass Modal Overlay & Card */
+.glass-modal-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 999999;
+  background: rgba(0, 0, 0, 0.75);
+  backdrop-filter: blur(16px) saturate(180%);
+  -webkit-backdrop-filter: blur(16px) saturate(180%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1.5rem;
+  animation: fadeInModal .2s cubic-bezier(.16,1,.3,1);
+}
+
+@keyframes fadeInModal {
+  from { opacity: 0; transform: scale(.96); }
+  to { opacity: 1; transform: scale(1); }
+}
+
+.glass-modal-card {
+  position: relative;
+  width: 100%;
+  max-width: 440px;
+  background: linear-gradient(180deg, rgba(20, 20, 26, 0.95) 0%, rgba(9, 9, 12, 0.98) 100%);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  border-radius: var(--radius-xl);
+  box-shadow: inset 0 1px 0 0 rgba(255, 255, 255, 0.22), 0 25px 60px -10px rgba(0, 0, 0, 0.95), 0 0 40px rgba(37, 99, 235, 0.15);
+  padding: 1.75rem;
+  overflow: hidden;
+}
+
+.glass-modal-glow {
+  pointer-events: none;
+  position: absolute;
+  top: -80px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 220px;
+  height: 120px;
+  background: radial-gradient(ellipse, rgba(37, 99, 235, 0.35) 0%, transparent 70%);
+  filter: blur(25px);
+}
+
+.glass-modal-header {
+  display: flex;
+  gap: 1rem;
+  align-items: flex-start;
+  margin-bottom: 1.5rem;
+  position: relative;
+  z-index: 1;
+}
+
+.glass-modal-icon {
+  width: 44px;
+  height: 44px;
+  border-radius: 12px;
+  background: rgba(37, 99, 235, 0.15);
+  border: 1px solid rgba(37, 99, 235, 0.3);
+  color: #60a5fa;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.2);
+}
+
+.glass-modal-icon.danger {
+  background: rgba(239, 68, 68, 0.15);
+  border-color: rgba(239, 68, 68, 0.3);
+  color: #f87171;
+}
+
+.glass-modal-title {
+  font-family: var(--font-heading);
+  font-size: 1.15rem;
+  font-weight: 700;
+  color: #ffffff;
+  margin-bottom: .35rem;
+  letter-spacing: -0.01em;
+}
+
+.glass-modal-msg {
+  font-size: .875rem;
+  color: var(--text2);
+  line-height: 1.5;
+}
+
+.glass-modal-actions {
+  display: flex;
+  gap: .75rem;
+  justify-content: flex-end;
+  position: relative;
+  z-index: 1;
+}
+
+/* Enhancements to Cards and Surfaces */
+.card {
+  background: var(--surface) !important;
+  backdrop-filter: blur(16px) saturate(180%) !important;
+  -webkit-backdrop-filter: blur(16px) saturate(180%) !important;
+  border: 1px solid var(--border) !important;
+  box-shadow: var(--glass-shadow) !important;
+  border-radius: var(--radius) !important;
+  transition: all .25s cubic-bezier(.16,1,.3,1) !important;
+}
+
+.card:hover {
+  border-color: var(--border2) !important;
+}
+
+.sidebar {
+  background: rgba(6, 6, 8, 0.85) !important;
+  backdrop-filter: blur(20px) saturate(190%) !important;
+  -webkit-backdrop-filter: blur(20px) saturate(190%) !important;
+  border-right: 1px solid var(--border) !important;
+}
+
+.topbar {
+  background: rgba(6, 6, 8, 0.75) !important;
+  backdrop-filter: blur(20px) saturate(190%) !important;
+  -webkit-backdrop-filter: blur(20px) saturate(190%) !important;
+  border-bottom: 1px solid var(--border) !important;
+}
+
+.btn-primary {
+  background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%) !important;
+  border: 1px solid rgba(255, 255, 255, 0.25) !important;
+  box-shadow: inset 0 1px 0 0 rgba(255, 255, 255, 0.35), 0 0 25px rgba(37, 99, 235, 0.45), 0 10px 20px -5px rgba(0, 0, 0, 0.7) !important;
+  color: #ffffff !important;
+  font-weight: 600 !important;
+  transition: all .2s cubic-bezier(.16,1,.3,1) !important;
+}
+
+.btn-primary:hover {
+  background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%) !important;
+  box-shadow: inset 0 1px 0 0 rgba(255, 255, 255, 0.45), 0 0 35px rgba(37, 99, 235, 0.65), 0 12px 24px -5px rgba(0, 0, 0, 0.85) !important;
+  transform: translateY(-1px) !important;
+}
+
+.btn-ghost {
+  background: rgba(24, 24, 30, 0.75) !important;
+  border: 1px solid var(--border) !important;
+  backdrop-filter: blur(10px) !important;
+  color: var(--text) !important;
+  box-shadow: inset 0 1px 0 0 rgba(255, 255, 255, 0.1) !important;
+}
+
+.btn-ghost:hover {
+  background: rgba(35, 35, 45, 0.9) !important;
+  border-color: var(--border2) !important;
+}
+
+.form-input, .form-select, .form-textarea {
+  background: rgba(12, 12, 16, 0.8) !important;
+  border: 1px solid var(--border) !important;
+  color: var(--text) !important;
+  border-radius: var(--radius-sm) !important;
+  box-shadow: inset 0 1px 2px rgba(0,0,0,0.5) !important;
+  backdrop-filter: blur(10px) !important;
+}
+
+.form-input:focus, .form-select:focus, .form-textarea:focus {
+  border-color: #3b82f6 !important;
+  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.25), inset 0 1px 2px rgba(0,0,0,0.5) !important;
+}
+
+.badge {
+  backdrop-filter: blur(8px) !important;
+  border: 1px solid var(--border) !important;
+}
+
+/* ── Reset ─────────────────────────────────────────────────────────────────── */
+*,*::before,*::after { box-sizing:border-box; margin:0; padding:0 }
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: var(--font-sans);
+  font-size: 14px;
+  line-height: 1.5;
+  min-height: 100vh;
+  overflow-x: hidden;
+  -webkit-font-smoothing: antialiased;
+}
+a { color: inherit; text-decoration: none }
+button { cursor: pointer; font-family: inherit; border: none; background: none }
+input, select, textarea { font-family: inherit }
+::selection { background: var(--ink-soft); color: var(--ink) }
+
+/* ── Scrollbar ──────────────────────────────────────────────────────────────── */
+::-webkit-scrollbar { width: 4px; height: 4px }
+::-webkit-scrollbar-track { background: transparent }
+::-webkit-scrollbar-thumb { background: var(--border2); border-radius: 9999px }
+
+/* ── Layout ─────────────────────────────────────────────────────────────────── */
+.layout { display: flex; min-height: 100vh }
+
+/* ── Grid utilities ─────────────────────────────────────────────────────────── */
+.grid-2   { display: grid; grid-template-columns: 1fr 1fr; gap: 1.25rem }
+.span-full { grid-column: 1 / -1 }
+.gap-sm   { gap: .625rem }
+.stack    { display: flex; flex-direction: column; gap: 1rem }
+.row-end  { display: flex; gap: .5rem; justify-content: flex-end }
+
+/* ════════════════════════════════════════════ SIDEBAR ══ */
+.sidebar {
+  width: var(--sidebar-w);
+  min-width: var(--sidebar-w);
+  background: var(--surface);
+  border-right: 1px solid var(--border);
+  display: flex;
+  flex-direction: column;
+  position: fixed;
+  top: 0; left: 0; bottom: 0;
+  z-index: 50;
+  transition: transform .3s var(--ease-out);
+}
+
+/* Logo */
+.sb-logo {
+  padding: 1.125rem 1.25rem;
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  gap: .75rem;
+  flex-shrink: 0;
+}
+.sb-logo-mark {
+  width: 36px; height: 36px;
+  background: linear-gradient(135deg, var(--ink) 0%, var(--ink-hover) 100%);
+  border-radius: 10px;
+  display: flex; align-items: center; justify-content: center;
+  flex-shrink: 0;
+  box-shadow: 0 0 0 1px rgba(99, 102, 241, 0.4), 0 4px 14px var(--ink-glow);
+}
+.sb-logo-mark svg { width: 18px; height: 18px }
+.sb-logo-name {
+  font-family: var(--font-heading);
+  font-weight: 700;
+  font-size: .9rem;
+  letter-spacing: -.025em;
+  color: var(--text);
+}
+.sb-logo-tag { font-size: .65rem; color: var(--text3); margin-top: .05rem }
+
+/* Nav */
+.sb-nav {
+  flex: 1;
+  padding: .875rem .75rem;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  overflow-y: auto;
+}
+.sb-section {
+  font-size: .6rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: .12em;
+  color: var(--text3);
+  padding: 1.25rem .875rem .35rem;
+}
+.sb-item {
+  display: flex;
+  align-items: center;
+  gap: .75rem;
+  padding: .625rem .875rem;
+  border-radius: var(--radius-sm);
+  font-size: .8125rem;
+  font-weight: 500;
+  color: var(--text2);
+  cursor: pointer;
+  transition: background .15s, color .15s;
+  position: relative;
+  width: 100%;
+  text-align: left;
+}
+.sb-item:hover { background: var(--surface2); color: var(--text) }
+.sb-item.active {
+  background: var(--ink-soft);
+  color: var(--ink);
+  font-weight: 600;
+}
+.sb-item.active::before {
+  content: '';
+  position: absolute;
+  left: 0; top: 50%;
+  transform: translateY(-50%);
+  width: 3px; height: 18px;
+  background: var(--ink);
+  border-radius: 0 3px 3px 0;
+}
+.sb-icon { width: 15px; height: 15px; opacity: .65; flex-shrink: 0 }
+.sb-item.active .sb-icon { opacity: 1 }
+
+/* User footer */
+.sb-footer {
+  padding: .875rem .75rem;
+  border-top: 1px solid var(--border);
+  flex-shrink: 0;
+}
+.sb-user {
+  display: flex;
+  align-items: center;
+  gap: .625rem;
+  padding: .5rem .625rem;
+  border-radius: var(--radius-sm);
+  transition: background .15s;
+}
+.sb-user:hover { background: var(--surface2) }
+.sb-avatar {
+  width: 30px; height: 30px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, var(--ink), var(--ink-hover));
+  display: flex; align-items: center; justify-content: center;
+  font-family: var(--font-heading);
+  font-size: .75rem; font-weight: 700; color: #fff;
+  flex-shrink: 0;
+}
+.sb-email {
+  font-size: .7rem;
+  color: var(--text3);
+  flex: 1;
+  overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+}
+.sb-logout {
+  color: var(--text3);
+  padding: .3rem;
+  border-radius: 5px;
+  transition: color .15s, background .15s;
+  line-height: 1;
+  display: flex; align-items: center; justify-content: center;
+  width: 26px; height: 26px;
+}
+.sb-logout:hover { color: var(--rose); background: var(--rose-s) }
+.sb-logout svg { width: 13px; height: 13px }
+
+/* ════════════════════════════════════════════ MAIN ══ */
+.main {
+  margin-left: var(--sidebar-w);
+  flex: 1;
+  min-width: 0; /* impede que tabelas largas estourem a borda direita */
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+/* Topbar */
+.topbar {
+  height: var(--topbar-h);
+  background: rgba(19, 27, 46, 0.85);
+  backdrop-filter: blur(16px) saturate(150%);
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 2rem;
+  position: sticky; top: 0; z-index: 40;
+  gap: 1rem;
+}
+.topbar-left { display: flex; align-items: center; gap: .875rem }
+.topbar-title {
+  font-family: var(--font-heading);
+  font-weight: 700;
+  font-size: .9375rem;
+  letter-spacing: -.025em;
+}
+.topbar-crumb { font-size: .72rem; color: var(--text3); margin-top: .1rem; font-weight: 400 }
+
+#menuBtn {
+  color: var(--text2);
+  padding: .375rem;
+  border-radius: 7px;
+  display: none;
+  transition: color .15s, background .15s;
+}
+#menuBtn:hover { color: var(--text); background: var(--surface2) }
+#menuBtn svg { width: 18px; height: 18px }
+
+.content { padding: 2rem; flex: 1; min-width: 0 }
+
+/* ════════════════════════════════════════════ STAT CARDS ══ */
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+}
+.stat-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: 1.375rem 1.5rem;
+  position: relative;
+  overflow: hidden;
+  cursor: default;
+  transition: border-color .25s, transform .25s var(--ease-out), box-shadow .25s;
+  animation: fadeUp .4s var(--ease-out) both;
+}
+.stat-card:nth-child(2) { animation-delay: .06s }
+.stat-card:nth-child(3) { animation-delay: .12s }
+.stat-card:nth-child(4) { animation-delay: .18s }
+.stat-card:hover {
+  border-color: var(--border2);
+  transform: translateY(-3px);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.35);
+}
+.stat-card::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(circle at top right, var(--c-glow, transparent), transparent 65%);
+  pointer-events: none;
+}
+.stat-icon {
+  width: 42px; height: 42px;
+  border-radius: 12px;
+  background: var(--c-bg, var(--ink-soft));
+  display: flex; align-items: center; justify-content: center;
+  margin-bottom: 1rem;
+  flex-shrink: 0;
+}
+.stat-label {
+  font-size: .65rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: .07em;
+  color: var(--text3);
+}
+.stat-value {
+  font-family: var(--font-heading);
+  font-size: 2.25rem;
+  font-weight: 800;
+  letter-spacing: -.05em;
+  color: var(--text);
+  margin-top: .2rem;
+  transition: all .3s;
+  line-height: 1;
+}
+.stat-sub { font-size: .7rem; color: var(--text3); margin-top: .35rem }
+
+/* ════════════════════════════════════════════ CARD ══ */
+.card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  animation: fadeUp .4s var(--ease-out) .1s both;
+  transition: box-shadow .25s;
+}
+.card:hover { box-shadow: 0 4px 20px rgba(0, 0, 0, 0.25) }
+.card-header {
+  padding: 1.125rem 1.5rem;
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+.card-title {
+  font-family: var(--font-heading);
+  font-weight: 700;
+  font-size: .875rem;
+  letter-spacing: -.02em;
+}
+.card-desc { font-size: .72rem; color: var(--text3); margin-top: .15rem }
+
+/* ════════════════════════════════════════════ SEARCH / FILTER ══ */
+.search-wrap { display: flex; gap: .5rem; flex: 1; max-width: 380px }
+.search-input {
+  flex: 1;
+  background: var(--bg2);
+  border: 1px solid var(--border2);
+  border-radius: var(--radius-sm);
+  color: var(--text);
+  padding: .5rem .875rem;
+  font-size: .8125rem;
+  outline: none;
+  transition: border-color .15s, box-shadow .15s;
+}
+.search-input::placeholder { color: var(--text3) }
+.search-input:focus {
+  border-color: var(--ink);
+  box-shadow: 0 0 0 3px var(--ink-soft);
+}
+.filter-sel {
+  background: var(--bg2);
+  border: 1px solid var(--border2);
+  border-radius: var(--radius-sm);
+  color: var(--text2);
+  padding: .5rem .75rem;
+  font-size: .78rem;
+  outline: none;
+  cursor: pointer;
+  transition: border-color .15s;
+}
+.filter-sel:focus { border-color: var(--ink) }
+
+/* ════════════════════════════════════════════ BUTTONS ══ */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  gap: .375rem;
+  border-radius: var(--radius-sm);
+  padding: .5rem .9rem;
+  font-size: .8125rem;
+  font-weight: 600;
+  line-height: 1.25;
+  transition: all .15s var(--ease-out);
+  white-space: nowrap;
+  border: 1px solid transparent;
+}
+.btn:active { transform: scale(.96) }
+.btn-primary {
+  background: var(--ink);
+  color: #fff;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3), 0 0 0 1px rgba(99, 102, 241, 0.45);
+}
+.btn-primary:hover {
+  background: var(--ink-hover);
+  box-shadow: 0 4px 14px var(--ink-glow);
+}
+.btn-ghost { background: transparent; color: var(--text2); border-color: var(--border2) }
+.btn-ghost:hover { background: var(--surface2); color: var(--text); border-color: var(--border2) }
+.btn-danger { background: var(--rose-s); color: var(--rose); border-color: rgba(244, 63, 94, 0.2) }
+.btn-danger:hover { background: var(--rose); color: #fff; border-color: var(--rose) }
+.btn-sm { padding: .3rem .625rem; font-size: .74rem }
+.btn-xs { padding: .2rem .45rem; font-size: .68rem }
+.btn:disabled { opacity: .5; cursor: not-allowed; transform: none }
+
+/* ════════════════════════════════════════════ TABLE ══ */
+.table-wrap { overflow-x: auto }
+table { width: 100%; border-collapse: collapse; font-size: .8125rem }
+thead th {
+  text-align: left;
+  padding: .75rem 1.25rem;
+  color: var(--text3);
+  font-size: .63rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: .09em;
+  border-bottom: 1px solid var(--border);
+  white-space: nowrap;
+  background: var(--bg2);
+  position: sticky; top: 0; z-index: 1;
+}
+td {
+  padding: .875rem 1.25rem;
+  border-bottom: 1px solid var(--border);
+  vertical-align: middle;
+  color: var(--text2);
+}
+tr:last-child td { border-bottom: none }
+tbody tr { transition: background .12s }
+tbody tr:nth-child(even) td { background: rgba(255, 255, 255, 0.015) }
+tbody tr:hover td { background: var(--surface2); color: var(--text) }
+.td-name { font-weight: 600; color: var(--text); font-size: .8375rem }
+.td-sub { font-size: .7rem; color: var(--text3); margin-top: .1rem }
+
+/* ════════════════════════════════════════════ BADGE ══ */
+.badge {
+  display: inline-flex;
+  align-items: center;
+  gap: .3rem;
+  padding: .2rem .6rem;
+  border-radius: 9999px;
+  font-size: .67rem;
+  font-weight: 700;
+  letter-spacing: .025em;
+  white-space: nowrap;
+}
+.badge-green  { background: var(--emerald-s); color: var(--emerald) }
+.badge-red    { background: var(--rose-s);    color: var(--rose) }
+.badge-amber  { background: var(--amber-s);   color: var(--amber) }
+.badge-ink    { background: var(--ink-soft);  color: var(--ink) }
+.badge-sky    { background: var(--sky-s);     color: var(--sky) }
+.badge-gray   { background: rgba(100, 116, 139, 0.12); color: var(--text2) }
+
+/* ── Color swatch ────────────────────────────────────────────────────────────── */
+.swatch-row { display: flex; gap: .35rem; align-items: center }
+.swatch {
+  width: 16px; height: 16px;
+  border-radius: 4px;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  flex-shrink: 0;
+}
+
+/* ════════════════════════════════════════════ MODAL ══ */
+.modal-overlay {
+  position: fixed; inset: 0;
+  background: rgba(0, 0, 0, 0.75);
+  backdrop-filter: blur(8px);
+  z-index: 100;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1rem;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity .2s;
+}
+.modal-overlay.open { opacity: 1; pointer-events: all }
+.modal-overlay.open .modal { transform: translateY(0) scale(1); opacity: 1 }
+.modal {
+  background: var(--surface);
+  border: 1px solid var(--border2);
+  border-radius: var(--radius-xl);
+  width: 100%; max-width: 560px;
+  max-height: 90vh;
+  overflow-y: auto;
+  box-shadow: 0 32px 80px rgba(0, 0, 0, 0.7), 0 0 0 1px rgba(255, 255, 255, 0.04);
+  transform: translateY(16px) scale(.98);
+  opacity: 0;
+  transition: transform .25s var(--ease-out), opacity .25s;
+}
+.modal-header {
+  padding: 1.25rem 1.5rem;
+  border-bottom: 1px solid var(--border);
+  display: flex; align-items: center; justify-content: space-between;
+  position: sticky; top: 0;
+  background: var(--surface);
+  border-radius: var(--radius-xl) var(--radius-xl) 0 0;
+  z-index: 1;
+}
+.modal-title {
+  font-family: var(--font-heading);
+  font-weight: 700;
+  font-size: .9375rem;
+  letter-spacing: -.025em;
+}
+.modal-close {
+  width: 28px; height: 28px;
+  border-radius: 7px;
+  display: flex; align-items: center; justify-content: center;
+  color: var(--text3);
+  font-size: .875rem;
+  transition: background .15s, color .15s;
+}
+.modal-close:hover { background: var(--surface2); color: var(--text) }
+.modal-body { padding: 1.5rem; display: flex; flex-direction: column; gap: 1rem }
+.modal-footer {
+  padding: 1rem 1.5rem;
+  border-top: 1px solid var(--border);
+  display: flex; gap: .5rem; justify-content: flex-end;
+}
+
+/* ════════════════════════════════════════════ FORM ══ */
+.form-row { display: grid; grid-template-columns: 1fr 1fr; gap: .875rem }
+.form-group { display: flex; flex-direction: column; gap: .3rem }
+.form-label {
+  font-size: .65rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: .08em;
+  color: var(--text3);
+}
+.form-input, .form-select, .form-textarea {
+  background: var(--bg2);
+  border: 1px solid var(--border2);
+  border-radius: var(--radius-sm);
+  color: var(--text);
+  padding: .575rem .875rem;
+  font-size: .8125rem;
+  outline: none;
+  transition: border-color .15s, box-shadow .15s;
+  width: 100%;
+}
+.form-input::placeholder { color: var(--text3) }
+.form-input:focus, .form-select:focus, .form-textarea:focus {
+  border-color: var(--ink);
+  box-shadow: 0 0 0 3px var(--ink-soft);
+}
+.form-textarea { resize: vertical; min-height: 80px; line-height: 1.6 }
+.form-select { cursor: pointer }
+.form-hint { font-size: .68rem; color: var(--text3); margin-top: .25rem; line-height: 1.5 }
+
+/* Analyzer banner */
+.ok-banner {
+  background: var(--emerald-s);
+  border: 1px solid rgba(16, 185, 129, 0.22);
+  border-radius: var(--radius-sm);
+  padding: .625rem .875rem;
+  font-size: .78rem;
+  color: var(--emerald);
+  font-weight: 500;
+  display: none;
+}
+
+/* ── Toggle Switch ───────────────────────────────────────────────────────────── */
+.toggle-switch {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  gap: .6rem;
+  cursor: pointer;
+  user-select: none;
+}
+.toggle-switch input {
+  opacity: 0;
+  width: 0;
+  height: 0;
+  position: absolute;
+}
+.toggle-slider {
+  position: relative;
+  display: inline-block;
+  width: 44px;
+  height: 24px;
+  background-color: rgba(255,255,255,.14);
+  border: 1px solid var(--border2);
+  border-radius: 9999px;
+  transition: all .25s ease;
+}
+.toggle-slider:before {
+  position: absolute;
+  content: "";
+  height: 16px;
+  width: 16px;
+  left: 3px;
+  bottom: 3px;
+  background-color: #fff;
+  border-radius: 50%;
+  transition: all .25s ease;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.4);
+}
+.toggle-switch input:checked + .toggle-slider {
+  background-color: #10b981;
+  border-color: #10b981;
+  box-shadow: 0 0 12px rgba(16, 185, 129, 0.35);
+}
+.toggle-switch input:checked + .toggle-slider:before {
+  transform: translateX(20px);
+}
+.toggle-label {
+  font-size: .75rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: .06em;
+  color: var(--text3);
+}
+.toggle-switch input:checked ~ .toggle-label {
+  color: #10b981;
+}
+
+/* ════════════════════════════════════════════ SLIDE PANEL ══ */
+.panel-backdrop {
+  position: fixed; inset: 0;
+  background: rgba(0, 0, 0, 0.55);
+  backdrop-filter: blur(4px);
+  z-index: 80;
+  display: none;
+  animation: fadeIn .2s;
+}
+.panel-backdrop.open { display: block }
+.panel {
+  position: fixed;
+  top: 0; right: 0; bottom: 0;
+  width: 500px; max-width: 100vw;
+  background: var(--surface);
+  border-left: 1px solid var(--border2);
+  z-index: 90;
+  display: flex; flex-direction: column;
+  transform: translateX(100%);
+  transition: transform .3s var(--ease-out);
+  box-shadow: -24px 0 60px rgba(0, 0, 0, 0.5);
+}
+.panel.open { transform: translateX(0) }
+.panel-header {
+  padding: 1.25rem 1.5rem;
+  border-bottom: 1px solid var(--border);
+  display: flex; align-items: flex-start; justify-content: space-between;
+  flex-shrink: 0;
+}
+.panel-body {
+  flex: 1; overflow-y: auto;
+  padding: 1.5rem;
+  display: flex; flex-direction: column; gap: 1.5rem;
+}
+
+/* Panel sections */
+.panel-section { }
+.panel-section-title {
+  font-size: .63rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: .1em;
+  color: var(--text3);
+  margin-bottom: .625rem;
+  display: flex; align-items: center; justify-content: space-between;
+}
+.info-grid { display: grid; grid-template-columns: 1fr 1fr; gap: .5rem }
+.info-cell {
+  background: var(--surface2);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: .75rem .875rem;
+  transition: border-color .15s;
+}
+.info-cell:hover { border-color: var(--border2) }
+.info-key {
+  font-size: .6rem;
+  color: var(--text3);
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: .07em;
+  margin-bottom: .2rem;
+}
+.info-val { font-size: .8125rem; color: var(--text); word-break: break-all; line-height: 1.4 }
+.info-full { grid-column: span 2 }
+
+/* Blog list in panel */
+.blog-list { display: flex; flex-direction: column; gap: .375rem }
+.blog-row {
+  background: var(--surface2);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  padding: .625rem .875rem;
+  display: flex; align-items: center; gap: .75rem;
+  transition: border-color .15s;
+}
+.blog-row:hover { border-color: var(--border2) }
+.blog-row-info { flex: 1; min-width: 0 }
+.blog-row-title {
+  font-size: .8125rem; font-weight: 600;
+  color: var(--text);
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+.blog-row-meta { font-size: .68rem; color: var(--text3); margin-top: .1rem }
+
+/* ════════════════════════════════════════════ ANALYZER ══ */
+.result-box {
+  background: var(--bg2);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  margin-top: 1rem;
+  overflow: hidden;
+}
+.result-box-header {
+  padding: .625rem 1rem;
+  border-bottom: 1px solid var(--border);
+  display: flex; align-items: center; gap: .75rem; flex-wrap: wrap;
+}
+.result-json {
+  padding: 1rem;
+  font-family: 'JetBrains Mono','Fira Code',monospace;
+  font-size: .72rem;
+  color: #0ea5e9;
+  white-space: pre-wrap;
+  word-break: break-all;
+  max-height: 360px;
+  overflow-y: auto;
+  line-height: 1.6;
+}
+
+/* ════════════════════════════════════════════ EMPTY STATE ══ */
+.empty {
+  text-align: center;
+  padding: 3.5rem 1rem;
+  color: var(--text3);
+}
+.empty svg { margin: 0 auto 1rem; opacity: .3 }
+.empty-title {
+  font-family: var(--font-heading);
+  font-weight: 600;
+  color: var(--text2);
+  font-size: .9rem;
+  margin-bottom: .3rem;
+  letter-spacing: -.02em;
+}
+.empty-sub { font-size: .78rem; max-width: 280px; margin: 0 auto; line-height: 1.6 }
+
+/* ════════════════════════════════════════════ PAGE TRANSITION ══ */
+.page { display: none }
+.page.active { display: block; animation: fadeUp .3s var(--ease-out) }
+
+/* ════════════════════════════════════════════ TOAST ══ */
+#toastZone {
+  position: fixed;
+  bottom: 1.5rem; right: 1.5rem;
+  z-index: 999;
+  display: flex; flex-direction: column; gap: .5rem;
+  pointer-events: none;
+}
+.toast {
+  background: var(--surface2);
+  border: 1px solid var(--border2);
+  border-radius: 12px;
+  padding: .75rem 1rem;
+  font-size: .8125rem;
+  font-weight: 500;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5);
+  display: flex; align-items: center; gap: .625rem;
+  animation: slideRight .25s var(--ease-out);
+  max-width: 300px;
+  pointer-events: all;
+}
+.toast-dot { width: 7px; height: 7px; border-radius: 50%; flex-shrink: 0 }
+.toast.success .toast-dot { background: var(--emerald) }
+.toast.error   .toast-dot { background: var(--rose) }
+
+/* ════════════════════════════════════════════ SPINNER ══ */
+.spin {
+  width: 14px; height: 14px;
+  border: 2px solid rgba(255, 255, 255, 0.25);
+  border-top-color: #fff;
+  border-radius: 50%;
+  animation: rotate .6s linear infinite;
+  display: inline-block; vertical-align: middle;
+}
+
+/* Divider */
+.divider { height: 1px; background: var(--border); margin: .5rem 0 }
+
+/* ════════════════════════════════════════════ ANIMATIONS ══ */
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(14px) }
+  to   { opacity: 1; transform: translateY(0) }
+}
+@keyframes fadeIn {
+  from { opacity: 0 } to { opacity: 1 }
+}
+@keyframes slideRight {
+  from { opacity: 0; transform: translateX(22px) }
+  to   { opacity: 1; transform: translateX(0) }
+}
+@keyframes rotate { to { transform: rotate(360deg) } }
+@keyframes countUp {
+  from { opacity: 0; transform: translateY(6px) }
+  to   { opacity: 1; transform: translateY(0) }
+}
+@keyframes pulse-dot {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.4) }
+  50%       { box-shadow: 0 0 0 6px transparent }
+}
+
+/* ════════════════════════════════════════════ SIDEBAR BACKDROP ══ */
+.sidebar-backdrop {
+  position: fixed; inset: 0;
+  background: rgba(0, 0, 0, 0.65);
+  backdrop-filter: blur(4px);
+  z-index: 45;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity .25s ease;
+}
+.sidebar-backdrop.open { opacity: 1; pointer-events: all }
+
+/* ════════════════════════════════════════════ RESPONSIVE ══ */
+@media (max-width: 1024px) {
+  .stats-grid { grid-template-columns: repeat(2, 1fr) }
+  .content { padding: 1.5rem }
+}
+@media (max-width: 768px) {
+  .sidebar { transform: translateX(-100%) }
+  .sidebar.open { transform: translateX(0); box-shadow: 12px 0 40px rgba(0, 0, 0, 0.8) }
+  .main { margin-left: 0 }
+  #menuBtn { display: block !important }
+  .form-row { grid-template-columns: 1fr }
+  .panel { width: 100% }
+  .content { padding: 1rem }
+  .topbar { padding: 0 1rem }
+  .stats-grid { grid-template-columns: 1fr 1fr }
+  .info-grid { grid-template-columns: 1fr }
+  .info-full { grid-column: span 1 }
+  .modal { width: 95%; max-height: 95vh }
+  .modal-body { padding: 1.25rem; gap: .75rem }
+  .clock-container { gap: 1rem; padding: 1.25rem; flex-wrap: wrap }
+  .clock-face { width: 96px; height: 96px }
+  .clock-time-digital { font-size: 1.5rem }
+}
+@media (max-width: 480px) {
+  .stats-grid { grid-template-columns: 1fr }
+  .topbar-title { font-size: .85rem }
+  .sb-logo-name { font-size: .8rem }
+  .clock-container { flex-direction: column; align-items: flex-start }
+  .clock-face { width: 84px; height: 84px }
+}
+
+/* ════════════════════════════════════════════ SCHEDULER COMPONENTS ══ */
+
+/* Day chips */
+.day-chips { display: flex; gap: .375rem; flex-wrap: wrap; margin-top: .25rem }
+.day-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: .3rem;
+  padding: .375rem .8rem;
+  background: var(--surface2);
+  border: 1px solid var(--border2);
+  border-radius: 9999px;
+  font-size: .78rem;
+  font-weight: 600;
+  color: var(--text2);
+  cursor: pointer;
+  transition: all .15s;
+  user-select: none;
+}
+.day-chip input { display: none }
+.day-chip:has(input:checked) {
+  background: var(--ink-soft);
+  border-color: rgba(99, 102, 241, 0.4);
+  color: var(--ink);
+}
+
+/* Horário chip */
+.horario-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: .375rem;
+  padding: .3rem .7rem;
+  background: var(--emerald-s);
+  border: 1px solid rgba(16, 185, 129, 0.25);
+  border-radius: 7px;
+  font-size: .78rem;
+  font-weight: 700;
+  color: var(--emerald);
+}
+.horario-chip button {
+  color: rgba(16, 185, 129, 0.5);
+  font-size: .7rem;
+  padding: 0;
+  line-height: 1;
+  transition: color .15s;
+}
+.horario-chip button:hover { color: var(--rose) }
+
+/* Keyword item */
+.kw-item {
+  display: flex;
+  align-items: center;
+  gap: .625rem;
+  padding: .625rem .875rem;
+  background: var(--surface2);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  transition: border-color .15s;
+}
+.kw-item:hover { border-color: var(--border2) }
+.kw-item-order {
+  width: 22px; height: 22px;
+  border-radius: 6px;
+  background: var(--ink-soft);
+  color: var(--ink);
+  font-size: .65rem;
+  font-weight: 800;
+  display: flex; align-items: center; justify-content: center;
+  flex-shrink: 0;
+}
+.kw-item-term { flex: 1; font-size: .8125rem; font-weight: 600; color: var(--text) }
+.kw-item-var { font-size: .72rem; color: var(--text3) }
+.kw-item-used {
+  font-size: .65rem;
+  padding: .15rem .4rem;
+  border-radius: 4px;
+  background: var(--amber-s);
+  color: var(--amber);
+  white-space: nowrap;
+}
+.kw-item-fresh {
+  font-size: .65rem;
+  padding: .15rem .4rem;
+  border-radius: 4px;
+  background: var(--emerald-s);
+  color: var(--emerald);
+}
+
+/* Sched item */
+.sched-item {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 1rem 1.125rem;
+  background: var(--surface2);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  transition: border-color .15s;
+}
+.sched-item:hover { border-color: var(--border2) }
+.sched-item-name {
+  font-family: var(--font-heading);
+  font-weight: 700;
+  font-size: .875rem;
+  flex: 1;
+  letter-spacing: -.02em;
+}
+.sched-item-times { display: flex; gap: .375rem; flex-wrap: wrap }
+.sched-del {
+  color: var(--text3);
+  padding: .3rem;
+  border-radius: 6px;
+  transition: color .15s, background .15s;
+  display: flex; align-items: center; justify-content: center;
+}
+.sched-del:hover { color: var(--rose); background: var(--rose-s) }
+.sched-del svg { width: 13px; height: 13px }
+
+/* Pulse animation for active scheduler */
+#sched-status-dot.active { animation: pulse-dot 2s infinite }
+
+/* Counter animation */
+.stat-value.counting { animation: countUp .4s var(--ease-out) }
+
+/* ════════════════════════════════════════════ ANALOG CLOCK ══ */
+.clock-container {
+  display: flex;
+  align-items: center;
+  gap: 1.75rem;
+  padding: 1.5rem 2rem;
+  background: var(--bg2);
+  border-bottom: 1px solid var(--border);
+}
+.clock-svg-wrap {
+  position: relative;
+  flex-shrink: 0;
+}
+.clock-face {
+  width: 120px; height: 120px;
+  filter: drop-shadow(0 8px 24px rgba(99, 102, 241, 0.2));
+}
+.clock-info {
+  display: flex;
+  flex-direction: column;
+  gap: .25rem;
+}
+.clock-time-digital {
+  font-family: var(--font-heading);
+  font-size: 2rem;
+  font-weight: 800;
+  letter-spacing: -.04em;
+  color: var(--text);
+  line-height: 1;
+}
+.clock-label {
+  font-size: .68rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: .09em;
+  color: var(--text3);
+  margin-top: .1rem;
+}
+.clock-date {
+  font-size: .8125rem;
+  color: var(--text2);
+  margin-top: .375rem;
+}
+.clock-status {
+  display: inline-flex;
+  align-items: center;
+  gap: .4rem;
+  margin-top: .5rem;
+  font-size: .72rem;
+  font-weight: 600;
+  color: var(--emerald);
+}
+.clock-status-dot {
+  width: 7px; height: 7px;
+  background: var(--emerald);
+  border-radius: 50%;
+  animation: pulse-dot 2s infinite;
+}
+
+/* ════════════════════════════════════════════ REDUCED MOTION ══ */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: .01ms !important;
+    transition-duration: .01ms !important;
+  }
+}
+
+</style>
+
+</head>
+<body>
+<!-- sidebar backdrop -->
+<div class="sidebar-backdrop" id="sidebarBackdrop" onclick="document.getElementById('sidebar').classList.remove('open'); document.getElementById('sidebarBackdrop').classList.remove('open')"></div>
+
+<div class="layout">
+
+<!-- ════════════════════════════════════ SIDEBAR ══ -->
+<aside class="sidebar" id="sidebar">
+  <div class="sb-logo">
+    <div class="sb-logo-mark">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M4 15s1-1 4-1 5 2 8 2 4-1 4-1V3s-1 1-4 1-5-2-8-2-4 1-4 1z"></path>
+        <line x1="4" y1="22" x2="4" y2="15"></line>
+      </svg>
+    </div>
+    <div>
+      <div class="sb-logo-name">ApexPress CRM</div>
+      <div class="sb-logo-tag">Motor Editorial Autônomo</div>
+    </div>
+  </div>
+
+  <nav class="sb-nav">
+    <div class="sb-section">Principal</div>
+
+    <button class="sb-item active" data-page="dashboard" onclick="nav('dashboard',this)">
+      <svg class="sb-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+        <rect x="3" y="3" width="7" height="7" rx="1.5"></rect>
+        <rect x="14" y="3" width="7" height="7" rx="1.5"></rect>
+        <rect x="14" y="14" width="7" height="7" rx="1.5"></rect>
+        <rect x="3" y="14" width="7" height="7" rx="1.5"></rect>
+      </svg>
+      Dashboard
+    </button>
+
+    <button class="sb-item" data-page="clients" onclick="nav('clients',this)">
+      <svg class="sb-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"></path>
+        <circle cx="9" cy="7" r="4"></circle>
+        <path d="M22 21v-2a4 4 0 0 0-3-3.87"></path>
+        <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
+      </svg>
+      Clientes
+    </button>
+
+    <button class="sb-item" data-page="blogs" onclick="nav('blogs',this)">
+      <svg class="sb-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+        <polyline points="14 2 14 8 20 8"></polyline>
+        <line x1="16" y1="13" x2="8" y2="13"></line>
+        <line x1="16" y1="17" x2="8" y2="17"></line>
+        <polyline points="10 9 9 9 8 9"></polyline>
+      </svg>
+      Blogs
+    </button>
+
+    <div class="sb-section">Monetização & Ads</div>
+
+    <button class="sb-item" data-page="ads" onclick="nav('ads',this)">
+      <svg class="sb-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+        <line x1="12" y1="1" x2="12" y2="23"></line>
+        <path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path>
+      </svg>
+      Anúncios & Banners
+    </button>
+
+    <div class="sb-section">Automação</div>
+
+    <button class="sb-item" data-page="scheduler" onclick="nav('scheduler',this)">
+      <svg class="sb-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+        <circle cx="12" cy="12" r="10"></circle>
+        <polyline points="12 6 12 12 16 14"></polyline>
+      </svg>
+      Agendador IA
+      <span id="sb-sched-badge" style="margin-left:auto;background:rgba(16,185,129,.18);color:#10b981;font-size:.6rem;font-weight:700;padding:.1rem .4rem;border-radius:9999px;display:none">ON</span>
+    </button>
+
+    <button class="sb-item" data-page="keywords" onclick="nav('keywords',this)">
+      <svg class="sb-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
+      </svg>
+      Palavras-chave
+    </button>
+
+    <div class="sb-section">Métricas & Tráfego</div>
+
+    <button class="sb-item" data-page="analytics" onclick="nav('analytics',this)">
+      <svg class="sb-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M18 20V10M12 20V4M6 20v-6"></path>
+      </svg>
+      Tráfego & Planilha
+    </button>
+
+    <div class="sb-section">Ferramentas</div>
+
+    <button class="sb-item" data-page="analyzer" onclick="nav('analyzer',this)">
+      <svg class="sb-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+        <circle cx="11" cy="11" r="8"></circle>
+        <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+      </svg>
+      Analisador Web
+    </button>
+  </nav>
+
+  <div class="sb-footer">
+    <div class="sb-user">
+      <div class="sb-avatar" id="userInitial">U</div>
+      <div class="sb-email" id="userEmail">...</div>
+      <button class="sb-logout" onclick="logout()" title="Sair">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
+          <polyline points="16 17 21 12 16 7"></polyline>
+          <line x1="21" y1="12" x2="9" y2="12"></line>
+        </svg>
+      </button>
+    </div>
+  </div>
+</aside>
+
+<!-- ════════════════════════════════════ MAIN ══ -->
+<main class="main">
+
+  <!-- topbar -->
+  <header class="topbar">
+    <div class="topbar-left">
+      <button id="menuBtn" onclick="document.getElementById('sidebar').classList.add('open'); document.getElementById('sidebarBackdrop').classList.add('open')" title="Menu">
+        <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><path d="M2 4h12M2 8h12M2 12h12"/></svg>
+      </button>
+      <div>
+        <div class="topbar-title" id="pageTitle">Dashboard</div>
+        <div class="topbar-crumb" id="pageCrumb">Visão geral do CRM</div>
+      </div>
+    </div>
+    <div id="topbarRight" style="display:flex;gap:.5rem;align-items:center">
+      <a class="btn btn-ghost btn-sm" href="/" target="_blank" title="Ver landing page" style="display:inline-flex;padding:.4rem .55rem">
+        <svg width="13" height="13" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="8" cy="8" r="6"/><path d="M2 8h12M8 2a9.5 9.5 0 0 1 0 12M8 2a9.5 9.5 0 0 0 0 12"/></svg>
+      </a>
+      <button class="btn btn-ghost btn-sm" onclick="location.reload()" title="Atualizar dados" style="display:inline-flex;padding:.4rem .55rem">
+        <svg width="13" height="13" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M13.5 8a5.5 5.5 0 1 1-1.6-3.9"/><path d="M13.5 2v3h-3"/></svg>
+      </button>
+    </div>
+  </header>
+
+  <div class="content">
+
+    <!-- ─── DASHBOARD ─── -->
+    <div class="page active" id="page-dashboard">
+
+      <!-- Stat Cards -->
+      <div class="stats-grid">
+        <div class="stat-card" style="--c-bg:var(--ink-soft);--c-glow:rgba(45,212,191,.08)">
+          <div class="stat-icon">
+            <svg width="18" height="18" viewBox="0 0 16 16" fill="none" stroke="#2dd4bf" stroke-width="1.6">
+              <circle cx="6" cy="5" r="2.5"/><path d="M1 13c0-2.76 2.24-5 5-5s5 2.24 5 5"/>
+              <path d="M11 3.5c1.38 0 2.5 1.12 2.5 2.5S12.38 8.5 11 8.5"/><path d="M13.5 13c0-2.07-1.07-3.87-2.67-4.88"/>
+            </svg>
+          </div>
+          <div class="stat-label">Total Clientes</div>
+          <div class="stat-value" id="s-total">—</div>
+          <div class="stat-sub">cadastrados no CRM</div>
+        </div>
+
+        <div class="stat-card" style="--c-bg:var(--emerald-s);--c-glow:rgba(16,185,129,.06)">
+          <div class="stat-icon">
+            <svg width="18" height="18" viewBox="0 0 16 16" fill="none" stroke="#10b981" stroke-width="1.6">
+              <path d="M2 8l4 4 8-8"/>
+            </svg>
+          </div>
+          <div class="stat-label">Ativos</div>
+          <div class="stat-value" id="s-active">—</div>
+          <div class="stat-sub">clientes ativos</div>
+        </div>
+
+        <div class="stat-card" style="--c-bg:var(--amber-s);--c-glow:rgba(245,158,11,.06)">
+          <div class="stat-icon">
+            <svg width="18" height="18" viewBox="0 0 16 16" fill="none" stroke="#f59e0b" stroke-width="1.6">
+              <rect x="2" y="2" width="12" height="12" rx="2"/><path d="M5 5h6M5 8h6M5 11h4"/>
+            </svg>
+          </div>
+          <div class="stat-label">Total Posts</div>
+          <div class="stat-value" id="s-blogs">—</div>
+          <div class="stat-sub">blogs criados</div>
+        </div>
+
+        <div class="stat-card" style="--c-bg:rgba(16,185,129,.1);--c-glow:rgba(16,185,129,.06)">
+          <div class="stat-icon">
+            <svg width="18" height="18" viewBox="0 0 16 16" fill="none" stroke="#10b981" stroke-width="1.6">
+              <circle cx="8" cy="8" r="6"/><path d="M8 5v3l2 2"/>
+            </svg>
+          </div>
+          <div class="stat-label">Agendamentos Ativos</div>
+          <div class="stat-value" id="s-schedules">—</div>
+          <div class="stat-sub"><span id="s-sched-next">verifique o agendador</span></div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-header">
+          <div>
+            <div class="card-title">Clientes recentes</div>
+            <div class="card-desc">Últimos 5 cadastrados</div>
+          </div>
+          <button class="btn btn-ghost btn-sm" onclick="nav('clients',document.querySelector('[data-page=clients]'))">
+            Ver todos →
+          </button>
+        </div>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>Cliente</th><th>Nicho</th><th>Blogs</th><th>Status</th><th></th></tr></thead>
+            <tbody id="recentClients"></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- ─── CLIENTES ─── -->
+    <div class="page" id="page-clients">
+      <div class="card">
+        <div class="card-header">
+          <div class="card-title">Clientes</div>
+          <div class="search-wrap">
+            <div style="position:relative;flex:1;min-width:0">
+              <svg style="position:absolute;left:.625rem;top:50%;transform:translateY(-50%);width:13px;height:13px;color:var(--text3);pointer-events:none" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="7" cy="7" r="4.5"/><path d="M10.5 10.5L14 14"/></svg>
+              <input class="search-input" type="text" placeholder="Buscar nome, e-mail, nicho..." id="clientSearch" oninput="loadClients()" style="padding-left:1.75rem;width:100%">
+            </div>
+            <select class="filter-sel" id="clientFilter" onchange="loadClients()">
+              <option value="%">Todos</option>
+              <option value="ativo">Ativos</option>
+              <option value="lead">Leads</option>
+              <option value="inativo">Inativos</option>
+            </select>
+          </div>
+          <button class="btn btn-primary btn-sm" onclick="openClientModal()">
+            <svg width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M6 1v10M1 6h10"/>
+            </svg>
+            Novo Cliente
+          </button>
+        </div>
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr><th>Cliente</th><th>Contato</th><th>Nicho</th><th>Cores</th><th>Blogs</th><th>Status</th><th>Ações</th></tr>
+            </thead>
+            <tbody id="clientTable"></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- ─── BLOGS ─── -->
+    <div class="page" id="page-blogs">
+      <div class="card">
+        <div class="card-header">
+          <div class="card-title">Todos os Blogs</div>
+          <select class="filter-sel" id="blogClientFilter" onchange="loadAllBlogs()">
+            <option value="">Todos os clientes</option>
+          </select>
+        </div>
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr><th>Capa</th><th>Título</th><th>Cliente</th><th>Status</th><th>Criado em</th><th>Ações</th></tr>
+            </thead>
+            <tbody id="allBlogsTable"></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- ─── ANALYZER ─── -->
+    <div class="page" id="page-analyzer">
+      <div class="card">
+        <div class="card-header">
+          <div>
+            <div class="card-title">Analisador de Sites</div>
+            <div class="card-desc">Extrai identidade visual, cores, contato e SEO automaticamente</div>
+          </div>
+        </div>
+        <div style="padding:1.5rem">
+          <div class="gap-sm" style="display:flex;flex-wrap:wrap">
+            <select class="filter-sel" id="analyzeClientSel" style="min-width:180px">
+              <option value="">Não vincular a cliente</option>
+            </select>
+            <input class="search-input" type="url" id="analyzeUrl" placeholder="https://sitedocliente.com.br" style="flex:1;min-width:240px">
+            <button class="btn btn-primary" id="analyzeBtn" onclick="runAnalyze()">
+              <svg width="13" height="13" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8">
+                <circle cx="7" cy="7" r="4.5"/><path d="M10.5 10.5L14 14"/>
+              </svg>
+              Analisar
+            </button>
+          </div>
+          <div id="analyzeResult"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ─── AGENDADOR IA ─── -->
+    <div class="page" id="page-scheduler">
+      <div class="grid-2" style="margin-bottom:1rem">
+        <!-- Card Status -->
+        <div class="card span-full">
+          <div class="card-header">
+            <div>
+              <div class="card-title" style="display:flex;align-items:center;gap:.4rem">
+                <svg style="width:15px;height:15px;color:var(--ink);flex-shrink:0" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="8" cy="8" r="6"/><path d="M8 4.5v3.5l2.5 2.5"/></svg>
+                Agendador Automático de Posts
+              </div>
+              <div class="card-desc">Configure quando cada site vai receber um novo post gerado por IA</div>
+            </div>
+          </div>
+          <div class="clock-container">
+            <div class="clock-svg-wrap">
+              <svg class="clock-face" viewBox="0 0 120 120" role="img" aria-label="Relógio do agendador automático">
+                <circle cx="60" cy="60" r="57" fill="var(--surface3)" stroke="var(--border2)" stroke-width="1.5"/>
+                <circle cx="60" cy="60" r="55" fill="none" stroke="rgba(99, 102, 241, 0.16)" stroke-width="1"/>
+                <g id="clockTicks"></g>
+                <g id="clockHands">
+                  <g id="hand-hour"><line x1="60" y1="60" x2="60" y2="40" stroke="var(--text)" stroke-width="4" stroke-linecap="round"/></g>
+                  <g id="hand-minute"><line x1="60" y1="60" x2="60" y2="27" stroke="var(--text)" stroke-width="2.5" stroke-linecap="round"/></g>
+                  <g id="hand-second"><line x1="60" y1="67" x2="60" y2="24" stroke="var(--ink)" stroke-width="1.5" stroke-linecap="round"/></g>
+                </g>
+                <circle cx="60" cy="60" r="4" fill="var(--ink)"/>
+                <circle cx="60" cy="60" r="1.6" fill="#f8fafc"/>
+              </svg>
+            </div>
+            <div class="clock-info">
+              <div class="clock-label">Horário de Brasília · Agendador IA</div>
+              <div class="clock-time-digital" id="clock-digital">--:--:--</div>
+              <div class="clock-date" id="clock-date">carregando…</div>
+              <div class="clock-status">
+                <div class="clock-status-dot" id="sched-status-dot"></div>
+                <span id="sched-status-txt">Motor ativo</span>
+                <span id="sched-server-time" style="font-size:.68rem;color:var(--text3);margin-left:.25rem"></span>
+              </div>
+            </div>
+          </div>
+          <div id="sched-list" class="stack" style="padding:1.5rem">
+            <div style="color:var(--text3);font-size:.8rem;text-align:center;padding:2rem 0">Carregando...</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Formulário novo agendamento -->
+      <div class="card">
+        <div class="card-header">
+          <div class="card-title">Novo Agendamento</div>
+        </div>
+        <div class="grid-2" style="padding:1.5rem">
+          <div class="form-group">
+            <label class="form-label">Cliente</label>
+            <select class="form-select" id="sched-client-sel">
+              <option value="">Selecione o cliente...</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Posts por dia</label>
+            <select class="form-select" id="sched-posts-per-day">
+              <option value="1">1 post por dia</option>
+              <option value="2">2 posts por dia</option>
+              <option value="3">3 posts por dia</option>
+              <option value="4">4 posts por dia</option>
+            </select>
+          </div>
+          <div class="form-group span-full">
+            <label class="form-label">Horários (horário de Brasília)</label>
+            <div id="sched-horarios-wrap" style="display:flex;flex-wrap:wrap;gap:.5rem;margin-top:.25rem">
+              <!-- horários dinâmicos -->
+            </div>
+            <div style="display:flex;gap:.5rem;margin-top:.625rem">
+              <input class="search-input" type="time" id="sched-horario-input" style="width:120px">
+              <button class="btn btn-ghost btn-sm" onclick="addHorario()">+ Adicionar horário</button>
+            </div>
+          </div>
+          <div class="form-group span-full">
+            <label class="form-label">Dias da semana</label>
+            <div class="day-chips" id="sched-dias-wrap">
+              <label class="day-chip"><input type="checkbox" value="1" checked> Seg</label>
+              <label class="day-chip"><input type="checkbox" value="2" checked> Ter</label>
+              <label class="day-chip"><input type="checkbox" value="3" checked> Qua</label>
+              <label class="day-chip"><input type="checkbox" value="4" checked> Qui</label>
+              <label class="day-chip"><input type="checkbox" value="5" checked> Sex</label>
+              <label class="day-chip"><input type="checkbox" value="6" checked> Sáb</label>
+              <label class="day-chip"><input type="checkbox" value="7" checked> Dom</label>
+            </div>
+            <div style="display:flex;gap:.5rem;margin-top:.5rem">
+              <button type="button" class="btn btn-ghost btn-xs" onclick="setScheduleDays('all')">Todos os Dias (7D)</button>
+              <button type="button" class="btn btn-ghost btn-xs" onclick="setScheduleDays('weekdays')">Apenas Dias Úteis</button>
+            </div>
+          </div>
+          <div class="span-full row-end">
+            <button class="btn btn-ghost btn-sm" onclick="testPost()">
+              <svg width="12" height="12" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M3 8l10-5-4 5 4 5-10-5z" fill="currentColor" stroke="none"/></svg>
+              Gerar post agora (teste)
+            </button>
+            <button class="btn btn-primary btn-sm" onclick="saveSchedule()">Salvar Agendamento</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ─── PALAVRAS-CHAVE ─── -->
+    <!-- ─── TRÁFEGO & ANALYTICS (PLANILHA DE ACESSOS AO VIVO) ─── -->
+    <div class="page" id="page-analytics">
+      <!-- Filtro e Exportação -->
+      <div class="card" style="margin-bottom:1.5rem">
+        <div class="card-header" style="flex-wrap:wrap;gap:1rem">
+          <div>
+            <div class="card-title" style="display:flex;align-items:center;gap:.5rem">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--ink)" stroke-width="2"><path d="M18 20V10M12 20V4M6 20v-6"/></svg>
+              Rastreamento de Tráfego & Planilha de Acessos
+            </div>
+            <div class="card-desc">Identificação em tempo real de origem (Google Orgânico, Ads, Direto), IP, localização e conversões</div>
+          </div>
+          <div style="display:flex;gap:.75rem;align-items:center;flex-wrap:wrap">
+            <select class="filter-sel" id="analytics-client-sel" onchange="loadAnalytics()" style="min-width:180px">
+              <option value="">Todos os clientes</option>
+            </select>
+            <select class="filter-sel" id="analytics-origin-sel" onchange="loadAnalytics()" style="min-width:160px">
+              <option value="all">Todas as origens</option>
+              <option value="Google Orgânico">🟢 Google Orgânico</option>
+              <option value="Google Ads">🟡 Google Ads</option>
+              <option value="Meta / Instagram Ads">🟣 Meta / Instagram Ads</option>
+              <option value="Direto / Link">🔵 Direto / Link</option>
+            </select>
+            <button class="btn btn-primary btn-sm" onclick="exportAnalyticsCsv()">
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M7 10l5 5 5-5M12 15V3"/></svg>
+              📥 Baixar Planilha (Excel / CSV)
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Stat Cards de Analytics -->
+      <div class="stats-grid" style="margin-bottom:1.5rem">
+        <div class="stat-card" style="--c-bg:rgba(37,99,235,.1);--c-glow:rgba(37,99,235,.08)">
+          <div class="stat-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#2563eb" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg></div>
+          <div class="stat-label">Total de Acessos</div>
+          <div class="stat-value" id="an-total">0</div>
+          <div class="stat-sub">eventos registrados</div>
+        </div>
+
+        <div class="stat-card" style="--c-bg:rgba(16,185,129,.1);--c-glow:rgba(16,185,129,.08)">
+          <div class="stat-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#10b981" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg></div>
+          <div class="stat-label">Google Orgânico</div>
+          <div class="stat-value" id="an-organico">0</div>
+          <div class="stat-sub">visitas via buscas Google</div>
+        </div>
+
+        <div class="stat-card" style="--c-bg:rgba(37,211,102,.12);--c-glow:rgba(37,211,102,.08)">
+          <div class="stat-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#25D366" stroke-width="2"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg></div>
+          <div class="stat-label">Cliques no WhatsApp</div>
+          <div class="stat-value" id="an-whatsapp">0</div>
+          <div class="stat-sub">leads acionados</div>
+        </div>
+
+        <div class="stat-card" style="--c-bg:rgba(245,158,11,.1);--c-glow:rgba(245,158,11,.08)">
+          <div class="stat-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#f59e0b" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg></div>
+          <div class="stat-label">Leituras > 35s</div>
+          <div class="stat-value" id="an-leituras">0</div>
+          <div class="stat-sub">artigos lidos até o fim</div>
+        </div>
+      </div>
+
+      <!-- Tabela Planilha de Acessos -->
+      <div class="card">
+        <div class="card-header">
+          <div class="card-title">Planilha de Tráfego em Tempo Real</div>
+          <button class="btn btn-ghost btn-xs" onclick="loadAnalytics()">🔄 Atualizar</button>
+        </div>
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>Data / Hora</th>
+                <th>Cliente</th>
+                <th>Origem do Tráfego</th>
+                <th>IP / Versão</th>
+                <th>Localização</th>
+                <th>Dispositivo</th>
+                <th>Página / Artigo</th>
+                <th>Ação Realizada</th>
+              </tr>
+            </thead>
+            <tbody id="analyticsTableBody">
+              <tr><td colspan="8" style="text-align:center;padding:2rem 0;color:var(--text3)">Carregando planilha de acessos...</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <div class="page" id="page-keywords">
+      <div style="display:grid;grid-template-columns:1fr 1.6fr;gap:1.25rem">
+        <!-- Adicionar keyword -->
+        <div class="card" style="align-self:start">
+          <div class="card-header" style="justify-content:space-between;flex-wrap:wrap;gap:.5rem">
+            <div class="card-title">Adicionar Palavra-chave</div>
+            <button type="button" class="btn btn-ghost btn-xs" onclick="inject42NationalKeywords()" title="Injetar 42 palavras validadas">
+              ⚡ Injetar 42 Termos Nacionais
+            </button>
+          </div>
+          <div class="stack" style="padding:1.5rem">
+            <div class="form-group">
+              <label class="form-label">Cliente</label>
+              <select class="form-select" id="kw-client-sel" onchange="loadKeywords()">
+                <option value="">Selecione...</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label class="form-label">Termos (um por linha)</label>
+              <textarea class="form-input" id="kw-termo" rows="6" placeholder="como desentupir pia&#10;desentupidora 24h&#10;pia entupida o que fazer" style="resize:vertical;font-family:inherit"></textarea>
+              <div class="form-hint">Um termo por linha — cada linha vira uma palavra-chave</div>
+            </div>
+            <div class="form-group">
+              <label class="form-label">Variação (opcional)</label>
+              <input class="form-input" id="kw-variacao" placeholder="Ex: pia entupida solução rápida">
+              <div class="form-hint">✨ Deixe em branco: a IA cria variações sozinha a cada post gerado e salva aqui no banco — você só digita o termo base. (Também aceita formato termo|variação)</div>
+            </div>
+            <button class="btn btn-primary btn-sm" onclick="addKeyword()" style="width:100%">
+              <svg width="12" height="12" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2"><path d="M8 2v12M2 8h12"/></svg>
+              Adicionar palavras-chave
+            </button>
+          </div>
+        </div>
+
+        <!-- Lista keywords -->
+        <div class="card">
+          <div class="card-header">
+            <div>
+              <div class="card-title">Banco de Palavras-chave</div>
+              <div class="card-desc">Ordenado por menor uso — próximo post usará a primeira</div>
+            </div>
+            <div style="display:flex;gap:.5rem;align-items:center">
+              <button class="btn btn-ghost btn-xs" onclick="generateBatchPostsForClient()" title="Gerar posts em lote para keywords não usadas">⚡ Gerar Posts em Lote</button>
+              <span id="kw-count" class="badge badge-green" style="display:none">0</span>
+            </div>
+          </div>
+          <div id="kw-list" class="stack" style="padding:1.25rem;max-height:560px;overflow-y:auto">
+            <div style="color:var(--text3);font-size:.8rem;text-align:center;padding:2rem 0">Selecione um cliente para ver as palavras-chave</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ─── MONETIZAÇÃO & ANÚNCIOS ─── -->
+    <div class="page" id="page-ads">
+      <div class="card" style="margin-bottom:1.5rem">
+        <div class="card-header">
+          <div>
+            <div class="card-title">Gestor de Anúncios & Espaços Publicitários</div>
+            <div class="card-desc">Selecione o cliente para configurar banners e espaços de monetização nos blogs</div>
+          </div>
+          <div style="display:flex;gap:.75rem;align-items:center">
+            <label style="font-size:.8rem;color:var(--text2);font-weight:600">Cliente:</label>
+            <select class="form-select" id="ads-client-sel" onchange="loadAdsForClient()" style="min-width:220px">
+              <option value="">Selecione um cliente...</option>
+            </select>
+          </div>
+        </div>
+      </div>
+
+      <div id="ads-container" style="display:none">
+        <div class="grid-2">
+          <!-- 1. Horizontal Topo -->
+          <div class="card">
+            <div class="card-header">
+              <div>
+                <div class="card-title" style="display:flex;align-items:center;gap:.5rem">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--ink)" stroke-width="2"><rect x="3" y="3" width="18" height="6" rx="1"/></svg>
+                  Banner Topo (Leaderboard)
+                </div>
+                <div class="card-desc">Exibido logo no topo de todos os posts (728x90 px)</div>
+              </div>
+              <label class="toggle-switch">
+                <input type="checkbox" id="ad-active-horizontal" onchange="updateToggleLabel('horizontal')">
+                <span class="toggle-slider"></span>
+                <span class="toggle-label" id="ad-lbl-horizontal">Inativo</span>
+              </label>
+            </div>
+            <div class="stack" style="padding:1.25rem">
+              <div class="form-group">
+                <label class="form-label">URL da Imagem do Banner</label>
+                <div style="display:flex;gap:.5rem">
+                  <input class="form-input" id="ad-img-horizontal" placeholder="https://exemplo.com/banner.png ou faça upload">
+                  <label class="btn btn-ghost btn-sm" style="cursor:pointer;flex-shrink:0">
+                    Upload
+                    <input type="file" accept="image/*" style="display:none" onchange="uploadAdFile('horizontal', this)">
+                  </label>
+                </div>
+              </div>
+              <div class="form-group">
+                <label class="form-label">Link de Destino ao Clicar</label>
+                <input class="form-input" id="ad-link-horizontal" placeholder="https://seusite.com.br/promocao">
+              </div>
+              <div style="display:flex;justify-content:space-between;align-items:center;padding-top:.5rem;border-top:1px solid var(--border)">
+                <div style="font-size:.78rem;color:var(--text3)">
+                  Métricas: <strong id="ad-views-horizontal" style="color:var(--text)">0</strong> views · <strong id="ad-clicks-horizontal" style="color:var(--text)">0</strong> clicks (<span id="ad-ctr-horizontal" style="color:var(--ink)">0.0%</span> CTR)
+                </div>
+                <button class="btn btn-primary btn-sm" onclick="saveSingleAd('horizontal')">Salvar Anúncio</button>
+              </div>
+            </div>
+          </div>
+
+          <!-- 2. In-Article (Meio do Artigo) -->
+          <div class="card">
+            <div class="card-header">
+              <div>
+                <div class="card-title" style="display:flex;align-items:center;gap:.5rem">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--ink)" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><line x1="3" y1="12" x2="21" y2="12"/></svg>
+                  In-Article (Meio do Conteúdo)
+                </div>
+                <div class="card-desc">Inserido estrategicamente no 3º parágrafo de cada post</div>
+              </div>
+              <label class="toggle-switch">
+                <input type="checkbox" id="ad-active-in_article" onchange="updateToggleLabel('in_article')">
+                <span class="toggle-slider"></span>
+                <span class="toggle-label" id="ad-lbl-in_article">Inativo</span>
+              </label>
+            </div>
+            <div class="stack" style="padding:1.25rem">
+              <div class="form-group">
+                <label class="form-label">URL da Imagem do Banner</label>
+                <div style="display:flex;gap:.5rem">
+                  <input class="form-input" id="ad-img-in_article" placeholder="https://exemplo.com/banner-meio.png">
+                  <label class="btn btn-ghost btn-sm" style="cursor:pointer;flex-shrink:0">
+                    Upload
+                    <input type="file" accept="image/*" style="display:none" onchange="uploadAdFile('in_article', this)">
+                  </label>
+                </div>
+              </div>
+              <div class="form-group">
+                <label class="form-label">Link de Destino ao Clicar</label>
+                <input class="form-input" id="ad-link-in_article" placeholder="https://seusite.com.br/whatsapp">
+              </div>
+              <div style="display:flex;justify-content:space-between;align-items:center;padding-top:.5rem;border-top:1px solid var(--border)">
+                <div style="font-size:.78rem;color:var(--text3)">
+                  Métricas: <strong id="ad-views-in_article" style="color:var(--text)">0</strong> views · <strong id="ad-clicks-in_article" style="color:var(--text)">0</strong> clicks (<span id="ad-ctr-in_article" style="color:var(--ink)">0.0%</span> CTR)
+                </div>
+                <button class="btn btn-primary btn-sm" onclick="saveSingleAd('in_article')">Salvar Anúncio</button>
+              </div>
+            </div>
+          </div>
+
+          <!-- 3. Sidebar (Barra Lateral) -->
+          <div class="card">
+            <div class="card-header">
+              <div>
+                <div class="card-title" style="display:flex;align-items:center;gap:.5rem">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--ink)" stroke-width="2"><rect x="14" y="3" width="7" height="18" rx="1"/></svg>
+                  Sidebar (Coluna Lateral)
+                </div>
+                <div class="card-desc">Bloco 300x250 px fixo na barra lateral do blog</div>
+              </div>
+              <label class="toggle-switch">
+                <input type="checkbox" id="ad-active-sidebar" onchange="updateToggleLabel('sidebar')">
+                <span class="toggle-slider"></span>
+                <span class="toggle-label" id="ad-lbl-sidebar">Inativo</span>
+              </label>
+            </div>
+            <div class="stack" style="padding:1.25rem">
+              <div class="form-group">
+                <label class="form-label">URL da Imagem do Banner</label>
+                <div style="display:flex;gap:.5rem">
+                  <input class="form-input" id="ad-img-sidebar" placeholder="https://exemplo.com/banner-sidebar.png">
+                  <label class="btn btn-ghost btn-sm" style="cursor:pointer;flex-shrink:0">
+                    Upload
+                    <input type="file" accept="image/*" style="display:none" onchange="uploadAdFile('sidebar', this)">
+                  </label>
+                </div>
+              </div>
+              <div class="form-group">
+                <label class="form-label">Link de Destino ao Clicar</label>
+                <input class="form-input" id="ad-link-sidebar" placeholder="https://seusite.com.br/orcamento">
+              </div>
+              <div style="display:flex;justify-content:space-between;align-items:center;padding-top:.5rem;border-top:1px solid var(--border)">
+                <div style="font-size:.78rem;color:var(--text3)">
+                  Métricas: <strong id="ad-views-sidebar" style="color:var(--text)">0</strong> views · <strong id="ad-clicks-sidebar" style="color:var(--text)">0</strong> clicks (<span id="ad-ctr-sidebar" style="color:var(--ink)">0.0%</span> CTR)
+                </div>
+                <button class="btn btn-primary btn-sm" onclick="saveSingleAd('sidebar')">Salvar Anúncio</button>
+              </div>
+            </div>
+          </div>
+
+          <!-- 4. Floating Footer (Barra Flutuante Mobile) -->
+          <div class="card">
+            <div class="card-header">
+              <div>
+                <div class="card-title" style="display:flex;align-items:center;gap:.5rem">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--ink)" stroke-width="2"><rect x="3" y="16" width="18" height="5" rx="1"/></svg>
+                  Barra Flutuante (Mobile Sticky)
+                </div>
+                <div class="card-desc">Barra fixa no rodapé da tela do celular para alto CTR</div>
+              </div>
+              <label class="toggle-switch">
+                <input type="checkbox" id="ad-active-floating" onchange="updateToggleLabel('floating')">
+                <span class="toggle-slider"></span>
+                <span class="toggle-label" id="ad-lbl-floating">Inativo</span>
+              </label>
+            </div>
+            <div class="stack" style="padding:1.25rem">
+              <div class="form-group">
+                <label class="form-label">URL da Imagem do Banner</label>
+                <div style="display:flex;gap:.5rem">
+                  <input class="form-input" id="ad-img-floating" placeholder="https://exemplo.com/banner-mobile.png">
+                  <label class="btn btn-ghost btn-sm" style="cursor:pointer;flex-shrink:0">
+                    Upload
+                    <input type="file" accept="image/*" style="display:none" onchange="uploadAdFile('floating', this)">
+                  </label>
+                </div>
+              </div>
+              <div class="form-group">
+                <label class="form-label">Link de Destino ao Clicar</label>
+                <input class="form-input" id="ad-link-floating" placeholder="https://wa.me/5511999999999">
+              </div>
+              <div style="display:flex;justify-content:space-between;align-items:center;padding-top:.5rem;border-top:1px solid var(--border)">
+                <div style="font-size:.78rem;color:var(--text3)">
+                  Métricas: <strong id="ad-views-floating" style="color:var(--text)">0</strong> views · <strong id="ad-clicks-floating" style="color:var(--text)">0</strong> clicks (<span id="ad-ctr-floating" style="color:var(--ink)">0.0%</span> CTR)
+                </div>
+                <button class="btn btn-primary btn-sm" onclick="saveSingleAd('floating')">Salvar Anúncio</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div id="ads-empty" style="text-align:center;padding:4rem 1.5rem;color:var(--text3)">
+        <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" style="margin-bottom:1rem;opacity:.5">
+          <line x1="12" y1="1" x2="12" y2="23"></line>
+          <path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path>
+        </svg>
+        <div style="font-size:1rem;color:var(--text);font-weight:600;margin-bottom:.3rem">Selecione um cliente acima</div>
+        <div style="font-size:.85rem">Você poderá ativar e configurar os 4 slots de anúncios de cada cliente</div>
+      </div>
+    </div>
+
+  </div><!-- /content -->
+
+</main>
+</div><!-- /layout -->
+
+<!-- ════════════════════════════════════ MODAL CLIENTE ══ -->
+<div class="modal-overlay" id="clientModal">
+  <div class="modal">
+    <div class="modal-header">
+      <div class="modal-title" id="clientModalTitle">Novo Cliente</div>
+      <button class="modal-close" onclick="closeClientModal()">✕</button>
+    </div>
+    <div class="modal-body">
+      <input type="hidden" id="clientId">
+
+      <!-- NEW: só URL -->
+      <div id="newClientBlock">
+        <div class="form-group">
+          <label class="form-label">Site do cliente</label>
+          <div style="display:flex;gap:.5rem">
+            <input class="form-input" id="f-website-new" type="url" placeholder="https://sitedocliente.com.br"
+              onkeydown="if(event.key==='Enter') analyzeAndFill()">
+            <button class="btn btn-primary" id="analyzeAndFillBtn" onclick="analyzeAndFill()" style="flex-shrink:0">
+              <svg width="13" height="13" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8">
+                <circle cx="7" cy="7" r="4.5"/><path d="M10.5 10.5L14 14"/>
+              </svg>
+              Analisar
+            </button>
+          </div>
+          <div class="form-hint">Cole o link — nome, nicho e contato são extraídos automaticamente.</div>
+        </div>
+        <div id="analyzeStatus" style="display:none;margin-top:.625rem"></div>
+      </div>
+
+      <!-- FIELDS: visíveis no edit ou após análise -->
+      <div id="clientFields" style="display:none;flex-direction:column;gap:.875rem">
+        <div class="ok-banner" id="analyzeOkBanner">✓ Dados extraídos — revise e salve</div>
+        
+        <!-- Tabs headers -->
+        <div style="display:flex;border-bottom:1px solid var(--border);margin-bottom:.5rem;gap:1.5rem">
+          <button type="button" class="btn-tab" id="tabBtnGeral" onclick="switchClientTab('geral')" style="padding:.5rem 0;color:var(--text);border-bottom:2px solid var(--ink);font-weight:600;font-size:.85rem;background:none;cursor:pointer">Geral</button>
+          <button type="button" class="btn-tab" id="tabBtnDesign" onclick="switchClientTab('design')" style="padding:.5rem 0;color:var(--text2);border-bottom:2px solid transparent;font-weight:500;font-size:.85rem;background:none;cursor:pointer">Identidade Visual & SEO</button>
+        </div>
+
+        <!-- TAB GERAL -->
+        <div id="tabGeral" style="display:flex;flex-direction:column;gap:.875rem">
+          <div class="form-row">
+            <div class="form-group">
+              <label class="form-label">Nome *</label>
+              <input class="form-input" id="f-name" placeholder="Nome do cliente">
+            </div>
+            <div class="form-group">
+              <label class="form-label">Status</label>
+              <select class="form-select" id="f-status">
+                <option value="ativo">Ativo</option>
+                <option value="lead">Lead</option>
+                <option value="inativo">Inativo</option>
+              </select>
+            </div>
+          </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label class="form-label">E-mail</label>
+              <input class="form-input" id="f-email" type="email" placeholder="email@cliente.com">
+            </div>
+            <div class="form-group">
+              <label class="form-label">Telefone / WhatsApp</label>
+              <input class="form-input" id="f-phone" placeholder="(34) 9xxxx-xxxx">
+            </div>
+          </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label class="form-label">Site</label>
+              <input class="form-input" id="f-website" type="url" placeholder="https://sitedocliente.com.br">
+            </div>
+            <div class="form-group">
+              <label class="form-label">Nicho</label>
+              <select class="form-select" id="f-nicho">
+                <option value="">Selecionar...</option>
+                <option value="Caça Vazamento / Desentupidora">Caça Vazamento / Desentupidora</option>
+                <option value="Direito / Advocacia">Direito / Advocacia</option>
+                <option value="Saúde / Clínica">Saúde / Clínica</option>
+                <option value="Imobiliária">Imobiliária</option>
+                <option value="Contabilidade">Contabilidade</option>
+                <option value="Alimentação / Gastronomia">Alimentação / Gastronomia</option>
+                <option value="Fitness / Saúde">Fitness / Saúde</option>
+                <option value="Serviços Gerais">Serviços Gerais</option>
+              </select>
+            </div>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Observações</label>
+            <textarea class="form-textarea" id="f-notes" placeholder="Notas internas sobre o cliente..."></textarea>
+          </div>
+        </div>
+
+        <!-- TAB DESIGN & SEO -->
+        <div id="tabDesign" style="display:none;flex-direction:column;gap:.875rem">
+          <div class="form-group">
+            <label class="form-label">Logo URL</label>
+            <div style="display:flex;gap:.5rem;align-items:center">
+              <input class="form-input" id="f-logo" placeholder="https://site.com/logo.png" oninput="updateLogoPreview(this.value)">
+              <div id="logoPreviewWrap" style="width:40px;height:40px;border-radius:6px;background:var(--bg2);border:1px solid var(--border);display:flex;align-items:center;justify-content:center;overflow:hidden;flex-shrink:0">
+                <img id="logoPreviewImg" src="" style="max-width:100%;max-height:100%;object-fit:contain;display:none">
+                <span id="logoPreviewEmpty" style="color:var(--text3);font-size:.65rem">Sem logo</span>
+              </div>
+            </div>
+          </div>
+          
+          <div class="form-row">
+            <div class="form-group">
+              <label class="form-label">Fonte</label>
+              <input class="form-input" id="f-fonte" placeholder="Ex: Inter, Arial, sans-serif">
+            </div>
+            <div class="form-group">
+              <label class="form-label">Localização / Área de Atendimento</label>
+              <input class="form-input" id="f-localizacao" placeholder="Ex: Cuiabá e Várzea Grande - MT">
+            </div>
+          </div>
+
+          <div style="background:var(--bg2);border:1px solid var(--border);border-radius:8px;padding:.75rem;display:flex;flex-direction:column;gap:.75rem">
+            <div style="font-size:.7rem;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:var(--text2)">Paleta de Cores</div>
+            
+            <div style="display:grid;grid-template-columns:repeat(auto-fit, minmax(110px, 1fr));gap:.625rem">
+              <div class="form-group">
+                <label class="form-label" style="font-size:.6rem">Cor Primária</label>
+                <div style="display:flex;gap:.35rem">
+                  <input type="color" id="f-cor_primaria_picker" oninput="document.getElementById('f-cor_primaria').value = this.value" style="width:34px;height:34px;border-radius:6px;border:1px solid var(--border);background:none;cursor:pointer;padding:0">
+                  <input class="form-input" id="f-cor_primaria" placeholder="#2dd4bf" style="font-size:.72rem;padding:.3rem .5rem" oninput="try { document.getElementById('f-cor_primaria_picker').value = this.value } catch(e) {}">
+                </div>
+              </div>
+              <div class="form-group">
+                <label class="form-label" style="font-size:.6rem">Cor de Fundo</label>
+                <div style="display:flex;gap:.35rem">
+                  <input type="color" id="f-cor_fundo_picker" oninput="document.getElementById('f-cor_fundo').value = this.value" style="width:34px;height:34px;border-radius:6px;border:1px solid var(--border);background:none;cursor:pointer;padding:0">
+                  <input class="form-input" id="f-cor_fundo" placeholder="#0b0f19" style="font-size:.72rem;padding:.3rem .5rem" oninput="try { document.getElementById('f-cor_fundo_picker').value = this.value } catch(e) {}">
+                </div>
+              </div>
+              <div class="form-group">
+                <label class="form-label" style="font-size:.6rem">Cor do Título</label>
+                <div style="display:flex;gap:.35rem">
+                  <input type="color" id="f-cor_titulo_picker" oninput="document.getElementById('f-cor_titulo').value = this.value" style="width:34px;height:34px;border-radius:6px;border:1px solid var(--border);background:none;cursor:pointer;padding:0">
+                  <input class="form-input" id="f-cor_titulo" placeholder="#ffffff" style="font-size:.72rem;padding:.3rem .5rem" oninput="try { document.getElementById('f-cor_titulo_picker').value = this.value } catch(e) {}">
+                </div>
+              </div>
+              <div class="form-group">
+                <label class="form-label" style="font-size:.6rem">Cor de Foco</label>
+                <div style="display:flex;gap:.35rem">
+                  <input type="color" id="f-cor_foco_picker" oninput="document.getElementById('f-cor_foco').value = this.value" style="width:34px;height:34px;border-radius:6px;border:1px solid var(--border);background:none;cursor:pointer;padding:0">
+                  <input class="form-input" id="f-cor_foco" placeholder="#ffcc00" style="font-size:.72rem;padding:.3rem .5rem" oninput="try { document.getElementById('f-cor_foco_picker').value = this.value } catch(e) {}">
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">SEO Título</label>
+            <input class="form-input" id="f-seo_titulo" placeholder="Título SEO para o Blog">
+          </div>
+          <div class="form-group">
+            <label class="form-label">SEO Descrição</label>
+            <textarea class="form-textarea" id="f-seo_descricao" style="min-height:50px" placeholder="Meta descrição para indexação no Google..."></textarea>
+          </div>
+          
+          <div class="form-group">
+            <label class="form-label">Footer HTML Customizado</label>
+            <textarea class="form-textarea" id="f-footer_html" style="min-height:70px;font-family:monospace;font-size:.72rem" placeholder="&lt;div class=&quot;footer-col&quot;&gt;...&lt;/div&gt;"></textarea>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-ghost btn-sm" onclick="closeClientModal()">Cancelar</button>
+      <button class="btn btn-primary btn-sm" id="saveClientBtn" onclick="saveClient()" style="display:none">Salvar Cliente</button>
+    </div>
+  </div>
+</div>
+
+<!-- ════════════════════════════════════ MODAL BLOG ══ -->
+<div class="modal-overlay" id="blogModal">
+  <div class="modal">
+    <div class="modal-header">
+      <div class="modal-title" id="blogModalTitle">Novo Blog</div>
+      <button class="modal-close" onclick="closeBlogModal()">✕</button>
+    </div>
+    <div class="modal-body">
+      <input type="hidden" id="blogId">
+      <input type="hidden" id="blogClientId">
+      <div class="form-group">
+        <label class="form-label">Título *</label>
+        <input class="form-input" id="b-title" placeholder="Título do post"
+          oninput="autoSlug(this.value)">
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label class="form-label">Slug</label>
+          <input class="form-input" id="b-slug" placeholder="gerado-automaticamente">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Status</label>
+          <select class="form-select" id="b-status">
+            <option value="rascunho">Rascunho</option>
+            <option value="publicado">Publicado</option>
+            <option value="arquivado">Arquivado</option>
+          </select>
+        </div>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Imagem de Capa (Trocar ou Personalizar Imagem)</label>
+        <div style="display:flex;gap:.75rem;align-items:center;margin-bottom:.5rem">
+          <div id="blogImgPreviewWrap" style="width:100px;height:60px;border-radius:6px;background:var(--bg2);border:1px solid var(--border);display:flex;align-items:center;justify-content:center;overflow:hidden;flex-shrink:0">
+            <img id="blogImgPreview" src="" style="width:100%;height:100%;object-fit:cover;display:none">
+            <span id="blogImgEmpty" style="color:var(--text3);font-size:.65rem">Sem capa</span>
+          </div>
+          <div style="flex:1;display:flex;flex-direction:column;gap:.35rem">
+            <input class="form-input" id="b-imagem_url" placeholder="https://... ou suba uma foto do seu computador" oninput="updateBlogImgPreview(this.value)" style="font-size:.78rem">
+            <div style="display:flex;gap:.5rem">
+              <input type="file" id="blogImgFile" accept="image/*" style="display:none" onchange="uploadBlogImgFile(this)">
+              <button type="button" class="btn btn-ghost btn-xs" onclick="document.getElementById('blogImgFile').click()">📤 Subir Imagem do PC</button>
+              <button type="button" class="btn btn-danger btn-xs" onclick="clearBlogImg()">🗑️ Remover</button>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Conteúdo</label>
+        <textarea class="form-textarea" id="b-content" style="min-height:140px" placeholder="Conteúdo do blog..."></textarea>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-ghost btn-sm" onclick="closeBlogModal()">Cancelar</button>
+      <button class="btn btn-primary btn-sm" id="saveBlogBtn" onclick="saveBlog()">Salvar</button>
+    </div>
+  </div>
+</div>
+
+<!-- ════════════════════════════════════ PANEL ══ -->
+<div class="panel-backdrop" id="panelBackdrop" onclick="closePanel()"></div>
+<div class="panel" id="clientPanel">
+  <div class="panel-header">
+    <div>
+      <div style="font-weight:700;font-size:.9375rem;letter-spacing:-.02em" id="panelName">—</div>
+      <div style="font-size:.75rem;color:var(--text3);margin-top:.15rem" id="panelNicho">—</div>
+    </div>
+    <div style="display:flex;gap:.375rem;align-items:center">
+      <button class="btn btn-primary btn-sm" onclick="viewCurrentBlog()">Ver Blog ↗</button>
+      <button class="btn btn-ghost btn-sm" onclick="editCurrentClient()">Editar</button>
+      <button class="btn btn-ghost btn-sm" onclick="analyzeCurrentClient()">Analisar</button>
+      <button class="modal-close" onclick="closePanel()">✕</button>
+    </div>
+  </div>
+  <div class="panel-body" id="panelBody"></div>
+</div>
+
+<!-- ════════════════════════════════════ TOASTS ══ -->
+<div id="toastZone"></div>
+
+<script>
+/* ── State ───────────────────────────────────────────────────────────────────── */
+let currentClientId = null;
+let currentClient = null;
+let clients = [];
+
+/* ── Init ────────────────────────────────────────────────────────────────────── */
+async function init() {
+  try {
+    const r = await fetch('/api/auth/me');
+    if (!r.ok) { location.href = '/login.html'; return; }
+    const u = await r.json();
+    document.getElementById('userEmail').textContent = u.email;
+    document.getElementById('userInitial').textContent = u.email[0].toUpperCase();
+  } catch(e) { location.href = '/login.html'; return; }
+
+  loadStats();
+  loadRecentClients();
+  loadClients();
+  loadAllBlogs();
+  loadClientSelects();
+}
+
+/* ── Navigation ──────────────────────────────────────────────────────────────── */
+const PAGE_TITLES = { dashboard:'Dashboard', clients:'Clientes', blogs:'Blogs', ads:'Monetização & Anúncios', analyzer:'Analisador Web', scheduler:'Agendador IA', keywords:'Banco de Palavras-chave' };
+const PAGE_CRUMBS = { dashboard:'Visão geral do CRM', clients:'Gerencie seus clientes', blogs:'Conteúdo publicado', ads:'Gerencie banners, slots de anúncios e conversão', analyzer:'Extraia identidade visual automaticamente', scheduler:'Automatize a geração de posts', keywords:'Termos para a IA criar conteúdo' };
+
+function nav(name, btn) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.sb-item').forEach(n => n.classList.remove('active'));
+  document.getElementById('page-'+name).classList.add('active');
+  if (btn) btn.classList.add('active');
+  document.getElementById('pageTitle').textContent = PAGE_TITLES[name] || name;
+  document.getElementById('pageCrumb').textContent = PAGE_CRUMBS[name] || '';
+  document.getElementById('sidebar').classList.remove('open');
+  document.getElementById('sidebarBackdrop').classList.remove('open');
+  if (name === 'scheduler') loadScheduler();
+  if (name === 'keywords') loadKeywordSelects();
+  if (name === 'ads') loadAdsSelects();
+}
+
+/* ── Stats ───────────────────────────────────────────────────────────────────── */
+async function loadStats() {
+  const d = await api('/api/stats');
+  animCount('s-total',    d.total_clients   ?? 0);
+  animCount('s-active',   d.active_clients  ?? 0);
+  animCount('s-blogs',    d.total_blogs     ?? 0);
+  // Schedules ativos
+  try {
+    const ss = await api('/api/scheduler-status');
+    const active = (ss.activeSchedules || []).length;
+    animCount('s-schedules', active);
+    const badge = document.getElementById('sb-sched-badge');
+    const dot = document.getElementById('sched-status-dot');
+    if (active > 0) {
+      badge.style.display = 'inline-flex';
+      if(dot) { dot.classList.add('active'); }
+      const next = ss.activeSchedules[0];
+      if(next) {
+        const h = JSON.parse(next.horarios || '[]')[0] || '—';
+        const el = document.getElementById('s-sched-next');
+        if(el) el.textContent = `próximo às ${h} (Brasília)`;
+      }
+    } else {
+      badge.style.display = 'none';
+    }
+  } catch(e) { animCount('s-schedules', 0); }
+}
+
+function animCount(id, target) {
+  const el = document.getElementById(id);
+  const start = parseInt(el.textContent) || 0;
+  const dur = 500, step = 16;
+  let t = 0;
+  const iv = setInterval(() => {
+    t += step;
+    const val = Math.round(start + (target - start) * Math.min(t/dur, 1));
+    el.textContent = val;
+    if (t >= dur) clearInterval(iv);
+  }, step);
+}
+
+/* ── Clients ─────────────────────────────────────────────────────────────────── */
+async function loadClients() {
+  const search = document.getElementById('clientSearch')?.value || '';
+  const status = document.getElementById('clientFilter')?.value || '%';
+  clients = await api('/api/clients?' + new URLSearchParams({ search, status }));
+  renderClientTable(clients);
+}
+
+function renderClientTable(rows) {
+  const tb = document.getElementById('clientTable');
+  if (!rows.length) {
+    tb.innerHTML = `<tr><td colspan="7">${emptyState('👥','Nenhum cliente encontrado','Cadastre um cliente ou ajuste o filtro')}</td></tr>`;
+    return;
+  }
+  tb.innerHTML = rows.map(c => `
+    <tr>
+      <td>
+        <div class="td-name">${esc(c.name)}</div>
+        ${c.email ? `<div class="td-sub">${esc(c.email)}</div>` : ''}
+      </td>
+      <td>
+        <div style="font-size:.78rem">${esc(c.phone||'—')}</div>
+        ${c.website ? `<div class="td-sub"><a href="${esc(c.website)}" target="_blank" style="color:var(--ink)">${shortUrl(c.website)}</a></div>` : ''}
+      </td>
+      <td><span style="font-size:.78rem;color:var(--text2)">${esc(c.nicho||'—')}</span></td>
+      <td>
+        ${c.cor_primaria
+          ? `<div class="swatch-row" title="Paleta: Primária (${c.cor_primaria}), Fundo (${c.cor_fundo||'—'}), Título (${c.cor_titulo||'—'}), Foco (${c.cor_foco||'—'})">
+               <div class="swatch" style="background:${c.cor_primaria}"></div>
+               ${c.cor_fundo ? `<div class="swatch" style="background:${c.cor_fundo};border:1px solid rgba(255,255,255,.2)"></div>` : ''}
+               ${c.cor_titulo ? `<div class="swatch" style="background:${c.cor_titulo}"></div>` : ''}
+               ${c.cor_foco ? `<div class="swatch" style="background:${c.cor_foco}"></div>` : ''}
+             </div>`
+          : '<span style="color:var(--text3);font-size:.72rem">—</span>'}
+      </td>
+      <td><span class="badge badge-ink">${c.blog_count}</span></td>
+      <td>${statusBadge(c.status)}</td>
+      <td>
+        <div style="display:flex;gap:.3rem">
+          <button class="btn btn-ghost btn-xs" onclick="openPanel(${c.id})" title="Ver">
+            <svg width="12" height="12" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="8" cy="8" r="3"/><path d="M1 8s3-5 7-5 7 5 7 5-3 5-7 5-7-5-7-5z"/></svg>
+          </button>
+          <button class="btn btn-ghost btn-xs" onclick="openClientModal(${c.id})" title="Editar">
+            <svg width="12" height="12" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M11.5 2.5l2 2L5 13l-3 1 1-3z"/></svg>
+          </button>
+          <button class="btn btn-danger btn-xs" onclick="deleteClient(${c.id},'${esc(c.name)}')" title="Deletar">
+            <svg width="12" height="12" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M2 4h12M5 4V2h6v2M6 7v5M10 7v5M3 4l1 10h8L13 4"/></svg>
+          </button>
+        </div>
+      </td>
+    </tr>
+  `).join('');
+}
+
+async function loadRecentClients() {
+  const rows = (await api('/api/clients?search=&status=%')).slice(0, 5);
+  const tb = document.getElementById('recentClients');
+  if (!rows.length) {
+    tb.innerHTML = `<tr><td colspan="5">${emptyState('👥','Nenhum cliente ainda','Clique em "Novo Cliente" para começar')}</td></tr>`;
+    return;
+  }
+  tb.innerHTML = rows.map(c => `
+    <tr onclick="openPanel(${c.id})" style="cursor:pointer">
+      <td><div class="td-name">${esc(c.name)}</div><div class="td-sub">${esc(c.email||'')}</div></td>
+      <td><span style="font-size:.78rem;color:var(--text2)">${esc(c.nicho||'—')}</span></td>
+      <td><span class="badge badge-ink">${c.blog_count}</span></td>
+      <td>${statusBadge(c.status)}</td>
+      <td><button class="btn btn-ghost btn-xs" onclick="event.stopPropagation();openPanel(${c.id})">Ver →</button></td>
+    </tr>
+  `).join('');
+}
+
+/* ── Client Modal ────────────────────────────────────────────────────────────── */
+function toHexColor(colorStr) {
+  if (!colorStr) return '#000000';
+  if (colorStr.startsWith('#')) {
+    if (colorStr.length === 4) {
+      return '#' + colorStr[1] + colorStr[1] + colorStr[2] + colorStr[2] + colorStr[3] + colorStr[3];
+    }
+    return colorStr;
+  }
+  const m = colorStr.match(/\d+/g);
+  if (m && m.length >= 3) {
+    const r = parseInt(m[0]);
+    const g = parseInt(m[1]);
+    const b = parseInt(m[2]);
+    return "#" + ((1 << 24) + (r << 16) + (g << 8) + b).toString(16).slice(1);
+  }
+  return '#000000';
+}
+
+function switchClientTab(tabName) {
+  const btnGeral = document.getElementById('tabBtnGeral');
+  const btnDesign = document.getElementById('tabBtnDesign');
+  const tabGeral = document.getElementById('tabGeral');
+  const tabDesign = document.getElementById('tabDesign');
+  
+  if (tabName === 'geral') {
+    btnGeral.style.borderBottomColor = 'var(--ink)';
+    btnGeral.style.fontWeight = '600';
+    btnGeral.style.color = 'var(--text)';
+    
+    btnDesign.style.borderBottomColor = 'transparent';
+    btnDesign.style.fontWeight = '500';
+    btnDesign.style.color = 'var(--text2)';
+    
+    tabGeral.style.display = 'flex';
+    tabDesign.style.display = 'none';
+  } else {
+    btnDesign.style.borderBottomColor = 'var(--ink)';
+    btnDesign.style.fontWeight = '600';
+    btnDesign.style.color = 'var(--text)';
+    
+    btnGeral.style.borderBottomColor = 'transparent';
+    btnGeral.style.fontWeight = '500';
+    btnGeral.style.color = 'var(--text2)';
+    
+    tabGeral.style.display = 'none';
+    tabDesign.style.display = 'flex';
+  }
+}
+
+function updateLogoPreview(url) {
+  const img = document.getElementById('logoPreviewImg');
+  const empty = document.getElementById('logoPreviewEmpty');
+  if (url && url !== 'Não encontrado' && url.trim() !== '') {
+    img.src = url;
+    img.style.display = 'block';
+    empty.style.display = 'none';
+  } else {
+    img.style.display = 'none';
+    empty.style.display = 'block';
+  }
+}
+
+async function openClientModal(id) {
+  document.getElementById('clientId').value = id || '';
+  document.getElementById('clientModalTitle').textContent = id ? 'Editar Cliente' : 'Novo Cliente';
+  
+  switchClientTab('geral');
+
+  const fields = ['name','email','phone','website','nicho','notes','logo','fonte','localizacao',
+    'cor_primaria','cor_fundo','cor_titulo','cor_foco','seo_titulo','seo_descricao','footer_html'];
+  fields.forEach(f => {
+    const el = document.getElementById('f-'+f); if (el) el.value = '';
+  });
+  
+  document.getElementById('f-cor_primaria_picker').value = '#000000';
+  document.getElementById('f-cor_fundo_picker').value = '#000000';
+  document.getElementById('f-cor_titulo_picker').value = '#000000';
+  document.getElementById('f-cor_foco_picker').value = '#000000';
+  updateLogoPreview('');
+  
+  document.getElementById('f-status').value = 'ativo';
+
+  // Autotirger analysis when pasting URL
+  const webNew = document.getElementById('f-website-new');
+  if (webNew) {
+    webNew.onpaste = () => setTimeout(analyzeAndFill, 100);
+    webNew.onchange = () => {
+      const val = webNew.value.trim();
+      if (val && (val.startsWith('http') || val.includes('.'))) {
+        analyzeAndFill();
+      }
+    };
+  }
+
+  if (id) {
+    document.getElementById('newClientBlock').style.display = 'none';
+    document.getElementById('clientFields').style.display = 'flex';
+    document.getElementById('analyzeOkBanner').style.display = 'none';
+    document.getElementById('saveClientBtn').style.display = '';
+    const c = await api('/api/clients/' + id);
+    document.getElementById('f-name').value        = c.name        || '';
+    document.getElementById('f-email').value       = c.email       || '';
+    document.getElementById('f-phone').value       = c.phone       || '';
+    document.getElementById('f-website').value     = c.website     || '';
+    document.getElementById('f-nicho').value       = c.nicho       || '';
+    document.getElementById('f-status').value      = c.status      || 'ativo';
+    document.getElementById('f-notes').value       = c.notes       || '';
+    document.getElementById('f-logo').value        = c.logo        || '';
+    document.getElementById('f-fonte').value       = c.fonte       || '';
+    document.getElementById('f-localizacao').value = c.localizacao || '';
+    
+    document.getElementById('f-cor_primaria').value = c.cor_primaria || '';
+    document.getElementById('f-cor_fundo').value    = c.cor_fundo    || '';
+    document.getElementById('f-cor_titulo').value   = c.cor_titulo   || '';
+    document.getElementById('f-cor_foco').value     = c.cor_foco     || '';
+    
+    document.getElementById('f-cor_primaria_picker').value = toHexColor(c.cor_primaria);
+    document.getElementById('f-cor_fundo_picker').value    = toHexColor(c.cor_fundo);
+    document.getElementById('f-cor_titulo_picker').value   = toHexColor(c.cor_titulo);
+    document.getElementById('f-cor_foco_picker').value     = toHexColor(c.cor_foco);
+    
+    document.getElementById('f-seo_titulo').value    = c.seo_titulo    || '';
+    document.getElementById('f-seo_descricao').value = c.seo_descricao || '';
+    document.getElementById('f-footer_html').value    = c.footer_html    || '';
+    
+    updateLogoPreview(c.logo);
+  } else {
+    document.getElementById('newClientBlock').style.display = 'block';
+    document.getElementById('clientFields').style.display = 'none';
+    document.getElementById('analyzeOkBanner').style.display = 'none';
+    document.getElementById('saveClientBtn').style.display = 'none';
+    document.getElementById('f-website-new').value = '';
+    document.getElementById('analyzeStatus').style.display = 'none';
+    document.getElementById('analyzeAndFillBtn').disabled = false;
+    document.getElementById('analyzeAndFillBtn').innerHTML =
+      `<svg width="13" height="13" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="7" cy="7" r="4.5"/><path d="M10.5 10.5L14 14"/></svg> Analisar`;
+  }
+  document.getElementById('clientModal').classList.add('open');
+}
+
+let currentExtractedSocial = null;
+
+async function analyzeAndFill() {
+  const url = document.getElementById('f-website-new').value.trim();
+  if (!url) { toast('Informe a URL do site', 'error'); return; }
+  const btn = document.getElementById('analyzeAndFillBtn');
+  const st  = document.getElementById('analyzeStatus');
+  if (btn.disabled) return; // Prevent double trigger
+  btn.disabled = true;
+  btn.innerHTML = `<span class="spin"></span> Analisando site completo...`;
+  st.style.display = 'block';
+  st.innerHTML = '<span style="color:var(--text3);font-size:.78rem">⏳ Extraindo identidade visual, redes sociais, contato e SEO...</span>';
+  try {
+    const d = await api('/api/analyze?url=' + encodeURIComponent(url));
+    const data = d.data;
+    document.getElementById('f-website').value = url;
+    document.getElementById('f-name').value  = data.seo?.titulo
+      ? data.seo.titulo.split(/[-|–|·]/)[0].trim().slice(0, 60)
+      : '';
+    if (data.contato?.email && data.contato?.email !== 'Não encontrado') {
+      document.getElementById('f-email').value = data.contato.email;
+    }
+    document.getElementById('f-phone').value = data.contato?.whatsapp !== 'Não encontrado'
+      ? data.contato.whatsapp : '';
+    document.getElementById('f-nicho').value = data.nicho || '';
+    
+    currentExtractedSocial = data.contato?.redesSociais || null;
+
+    document.getElementById('f-logo').value = (data.design?.logo && data.design?.logo !== 'Não encontrado') ? data.design.logo : '';
+    updateLogoPreview(data.design?.logo);
+    
+    document.getElementById('f-fonte').value = data.design?.fonte || 'Inter';
+    document.getElementById('f-localizacao').value = (data.contato?.localizacao && data.contato?.localizacao !== 'Não encontrada') ? data.contato.localizacao : '';
+    
+    const hexPri = toHexColor(data.design?.cores?.corPrimaria || data.design?.cores?.primaryColor);
+    const hexBg  = toHexColor(data.design?.cores?.corFundo || data.design?.cores?.headerBg);
+    const hexTit = toHexColor(data.design?.cores?.corTitulo || '#0b2238');
+    const hexFoc = toHexColor(data.design?.cores?.corFoco || '#ffcc00');
+    
+    document.getElementById('f-cor_primaria').value = hexPri;
+    document.getElementById('f-cor_fundo').value    = hexBg;
+    document.getElementById('f-cor_titulo').value   = hexTit;
+    document.getElementById('f-cor_foco').value     = hexFoc;
+    
+    document.getElementById('f-cor_primaria_picker').value = hexPri;
+    document.getElementById('f-cor_fundo_picker').value    = hexBg;
+    document.getElementById('f-cor_titulo_picker').value   = hexTit;
+    document.getElementById('f-cor_foco_picker').value     = hexFoc;
+    
+    document.getElementById('f-seo_titulo').value    = data.seo?.titulo || '';
+    document.getElementById('f-seo_descricao').value = data.seo?.descricao || '';
+    document.getElementById('f-footer_html').value    = (data.estrutura?.footerHtml && data.estrutura?.footerHtml !== 'Não encontrado') ? data.estrutura.footerHtml : '';
+
+    const socialCount = Object.keys(data.contato?.redesSociais || {}).length;
+    const socialText = socialCount > 0 ? ` | ${socialCount} redes sociais conectadas` : '';
+
+    document.getElementById('analyzeOkBanner').innerHTML = `
+      <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:.5rem">
+        <div>✓ <strong>Análise Completa!</strong> Dados e redes extraídos${socialText}.</div>
+        <div style="display:flex;gap:.35rem;align-items:center" title="Paleta extraída">
+          <span style="font-size:.65rem;color:var(--text2);margin-right:.2rem">Cores:</span>
+          <div class="swatch" style="background:${hexPri}" title="Primária: ${hexPri}"></div>
+          <div class="swatch" style="background:${hexBg};border:1px solid rgba(255,255,255,.3)" title="Fundo: ${hexBg}"></div>
+          <div class="swatch" style="background:${hexTit}" title="Título: ${hexTit}"></div>
+          <div class="swatch" style="background:${hexFoc}" title="Foco: ${hexFoc}"></div>
+        </div>
+      </div>
+    `;
+    document.getElementById('analyzeOkBanner').style.display = 'block';
+    document.getElementById('clientFields').style.display = 'flex';
+    document.getElementById('saveClientBtn').style.display = '';
+    st.style.display = 'none';
+    setTimeout(() => document.getElementById('f-name').focus(), 50);
+  } catch(e) {
+    st.innerHTML = `<span style="color:var(--rose);font-size:.78rem">✕ ${esc(e.message)}</span>`;
+  } finally {
+    btn.disabled = false;
+    btn.innerHTML = `<svg width="13" height="13" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="7" cy="7" r="4.5"/><path d="M10.5 10.5L14 14"/></svg> Analisar`;
+  }
+}
+
+function closeClientModal() { document.getElementById('clientModal').classList.remove('open') }
+
+async function saveClient() {
+  const id = document.getElementById('clientId').value;
+  const body = {
+    name:          document.getElementById('f-name').value.trim(),
+    email:         document.getElementById('f-email').value.trim(),
+    phone:         document.getElementById('f-phone').value.trim(),
+    website:       document.getElementById('f-website').value.trim(),
+    nicho:         document.getElementById('f-nicho').value,
+    status:        document.getElementById('f-status').value,
+    notes:         document.getElementById('f-notes').value.trim(),
+    whatsapp:      document.getElementById('f-phone').value.trim(),
+    localizacao:   document.getElementById('f-localizacao').value.trim(),
+    logo:          document.getElementById('f-logo').value.trim(),
+    fonte:         document.getElementById('f-fonte').value.trim(),
+    cor_primaria:  document.getElementById('f-cor_primaria').value.trim(),
+    cor_fundo:     document.getElementById('f-cor_fundo').value.trim(),
+    cor_titulo:    document.getElementById('f-cor_titulo').value.trim(),
+    cor_foco:      document.getElementById('f-cor_foco').value.trim(),
+    redes_sociais: currentExtractedSocial || undefined,
+    seo_titulo:    document.getElementById('f-seo_titulo').value.trim(),
+    seo_descricao: document.getElementById('f-seo_descricao').value.trim(),
+    footer_html:   document.getElementById('f-footer_html').value.trim(),
+  };
+  if (!body.name) { toast('Nome é obrigatório', 'error'); return; }
+  const btn = document.getElementById('saveClientBtn');
+  btn.disabled = true; btn.innerHTML = '<span class="spin"></span> Salvando...';
+  try {
+    if (id) { await api('/api/clients/'+id, {method:'PUT', body}); toast('Cliente atualizado!'); }
+    else     { await api('/api/clients',    {method:'POST',body}); toast('Cliente criado!'); }
+    closeClientModal();
+    loadClients(); loadRecentClients(); loadStats(); loadClientSelects();
+  } catch(e) { toast(e.message, 'error'); }
+  finally { btn.disabled = false; btn.textContent = 'Salvar Cliente'; }
+}
+
+
+// ── LIQUID GLASS MODALS & CONFIRM DIALOGS ────────────────────────────────────
+function showGlassConfirm({ title = 'Confirmar Ação', message = 'Deseja prosseguir?', confirmText = 'Confirmar', cancelText = 'Cancelar', isDestructive = false } = {}) {
+  return new Promise((resolve) => {
+    const modal = document.getElementById('glass-confirm-modal');
+    const titleEl = document.getElementById('glass-modal-title');
+    const msgEl = document.getElementById('glass-modal-msg');
+    const iconEl = document.getElementById('glass-modal-icon');
+    const btnCancel = document.getElementById('glass-modal-btn-cancel');
+    const btnConfirm = document.getElementById('glass-modal-btn-confirm');
+
+    titleEl.textContent = title;
+    msgEl.innerHTML = message.replace(/\n/g, '<br>');
+    btnConfirm.textContent = confirmText;
+    btnCancel.textContent = cancelText;
+
+    if (isDestructive) {
+      iconEl.className = 'glass-modal-icon danger';
+      btnConfirm.className = 'btn btn-primary';
+      btnConfirm.style.background = 'linear-gradient(135deg, #ef4444 0%, #dc2626 100%)';
+      btnConfirm.style.boxShadow = 'inset 0 1px 0 rgba(255,255,255,0.3), 0 0 25px rgba(239,68,68,0.4)';
+    } else {
+      iconEl.className = 'glass-modal-icon';
+      btnConfirm.className = 'btn btn-primary';
+      btnConfirm.style.background = '';
+      btnConfirm.style.boxShadow = '';
+    }
+
+    modal.style.display = 'flex';
+
+    function cleanup(res) {
+      modal.style.display = 'none';
+      btnCancel.removeEventListener('click', onCancel);
+      btnConfirm.removeEventListener('click', onConfirm);
+      window.removeEventListener('keydown', onKeyDown);
+      resolve(res);
+    }
+
+    function onCancel() { cleanup(false); }
+    function onConfirm() { cleanup(true); }
+    function onKeyDown(e) {
+      if (e.key === 'Escape') cleanup(false);
+      if (e.key === 'Enter') cleanup(true);
+    }
+
+    btnCancel.addEventListener('click', onCancel);
+    btnConfirm.addEventListener('click', onConfirm);
+    window.addEventListener('keydown', onKeyDown);
+  });
+}
+
+
+async function deleteClient(id, name) {
+  const ok = await showGlassConfirm({
+    title: 'Excluir Cliente',
+    message: `Tem certeza que deseja remover "${name}"?
+Todos os artigos e configurações vinculados a este cliente serão excluídos.`,
+    confirmText: 'Excluir Cliente',
+    isDestructive: true
+  });
+  if (!ok) return;
+  await api('/api/clients/'+id, {method:'DELETE'});
+  toast('Cliente removido');
+  loadClients(); loadRecentClients(); loadStats(); loadClientSelects();
+  if (document.getElementById('clientPanel').classList.contains('open')) closePanel();
+}
+
+/* ── Client Panel ────────────────────────────────────────────────────────────── */
+async function openPanel(id) {
+  currentClientId = id;
+  const [c, blogs, adRows] = await Promise.all([
+    api('/api/clients/'+id),
+    api('/api/clients/'+id+'/blogs'),
+    api('/api/clients/'+id+'/ads').catch(() => [])
+  ]);
+  currentClient = c;
+
+  // Estado local dos anúncios (horizontal + sidebar)
+  window._adsState = {
+    horizontal: { posicao:'horizontal', ativo:0, imagem_url:'', link_url:'', views:0, clicks:0 },
+    sidebar:    { posicao:'sidebar',    ativo:0, imagem_url:'', link_url:'', views:0, clicks:0 }
+  };
+  (adRows || []).forEach(a => { window._adsState[a.posicao] = Object.assign({}, window._adsState[a.posicao], a); });
+
+  document.getElementById('panelName').textContent  = c.name;
+  document.getElementById('panelNicho').textContent = c.nicho || 'Nicho não definido';
+
+  document.getElementById('panelBody').innerHTML = `
+    <div class="panel-section">
+      <div class="panel-section-title">Informações</div>
+      <div class="info-grid">
+        <div class="info-cell"><div class="info-key">E-mail</div><div class="info-val">${esc(c.email||'—')}</div></div>
+        <div class="info-cell"><div class="info-key">Telefone</div><div class="info-val">${esc(c.phone||'—')}</div></div>
+        <div class="info-cell info-full"><div class="info-key">Site</div><div class="info-val">
+          ${c.website ? `<a href="${esc(c.website)}" target="_blank" style="color:var(--ink)">${esc(c.website)}</a>` : '—'}
+        </div></div>
+        <div class="info-cell"><div class="info-key">Status</div><div class="info-val">${statusBadge(c.status)}</div></div>
+        <div class="info-cell"><div class="info-key">WhatsApp</div><div class="info-val">${esc(c.whatsapp||'—')}</div></div>
+        ${c.localizacao ? `<div class="info-cell info-full"><div class="info-key">Localização</div><div class="info-val">${esc(c.localizacao)}</div></div>` : ''}
+      </div>
+    </div>
+
+    ${(c.cor_primaria||c.fonte||c.logo) ? `
+    <div class="panel-section">
+      <div class="panel-section-title">Identidade Visual</div>
+      <div class="info-grid">
+        ${c.logo && c.logo !== 'Não encontrado' ? `
+          <div class="info-cell info-full">
+            <div class="info-key">Logo / Ícone</div>
+            <div class="info-val"><a href="${esc(c.logo)}" target="_blank" style="color:var(--ink)">↗ Ver logo</a></div>
+          </div>` : ''}
+        ${c.fonte ? `
+          <div class="info-cell info-full">
+            <div class="info-key">Fonte</div>
+            <div class="info-val" style="font-size:.72rem;color:var(--text3)">${esc(c.fonte)}</div>
+          </div>` : ''}
+        ${(c.cor_primaria||c.cor_fundo||c.cor_titulo||c.cor_foco) ? `
+          <div class="info-cell info-full">
+            <div class="info-key">Paleta de cores</div>
+            <div style="display:flex;gap:.75rem;margin-top:.4rem;flex-wrap:wrap">
+              ${c.cor_primaria ? `<div style="display:flex;align-items:center;gap:.4rem">
+                <div class="swatch" style="background:${c.cor_primaria};width:22px;height:22px;border-radius:6px"></div>
+                <span style="font-size:.7rem;color:var(--text3)">Primária<br>${c.cor_primaria}</span></div>` : ''}
+              ${c.cor_fundo ? `<div style="display:flex;align-items:center;gap:.4rem">
+                <div class="swatch" style="background:${c.cor_fundo};width:22px;height:22px;border-radius:6px"></div>
+                <span style="font-size:.7rem;color:var(--text3)">Fundo<br>${c.cor_fundo}</span></div>` : ''}
+              ${c.cor_titulo ? `<div style="display:flex;align-items:center;gap:.4rem">
+                <div class="swatch" style="background:${c.cor_titulo};width:22px;height:22px;border-radius:6px"></div>
+                <span style="font-size:.7rem;color:var(--text3)">Título<br>${c.cor_titulo}</span></div>` : ''}
+              ${c.cor_foco ? `<div style="display:flex;align-items:center;gap:.4rem">
+                <div class="swatch" style="background:${c.cor_foco};width:22px;height:22px;border-radius:6px"></div>
+                <span style="font-size:.7rem;color:var(--text3)">Foco<br>${c.cor_foco}</span></div>` : ''}
+            </div>
+          </div>` : ''}
+      </div>
+    </div>` : ''}
+
+    ${(c.seo_titulo||c.seo_descricao) ? `
+    <div class="panel-section">
+      <div class="panel-section-title">SEO</div>
+      <div class="info-grid">
+        ${c.seo_titulo    ? `<div class="info-cell info-full"><div class="info-key">Título</div><div class="info-val">${esc(c.seo_titulo)}</div></div>` : ''}
+        ${c.seo_descricao ? `<div class="info-cell info-full"><div class="info-key">Descrição</div><div class="info-val" style="color:var(--text3);font-size:.78rem">${esc(c.seo_descricao)}</div></div>` : ''}
+      </div>
+    </div>` : ''}
+
+    ${c.notes ? `
+    <div class="panel-section">
+      <div class="panel-section-title">Observações</div>
+      <div class="info-cell" style="grid-column:span 2">
+        <div class="info-val" style="color:var(--text3);line-height:1.6">${esc(c.notes)}</div>
+      </div>
+    </div>` : ''}
+
+    <div class="panel-section">
+      <div class="panel-section-title">
+        Anúncios do Blog
+        <button class="btn btn-primary btn-xs" onclick="saveAds()">Salvar Anúncios</button>
+      </div>
+      <div class="stack" style="gap:.75rem">
+        ${renderAdsSection()}
+      </div>
+    </div>
+
+    <div class="panel-section">
+      <div class="panel-section-title">
+        Blogs (${blogs.length})
+        <button class="btn btn-primary btn-xs" onclick="openBlogModal(null,${id})">+ Novo</button>
+      </div>
+      <div class="blog-list">
+        ${blogs.length === 0
+          ? emptyState('📄','Nenhum blog criado','Clique em "+ Novo" para criar')
+          : blogs.map(b => `
+            <div class="blog-row">
+              <div onclick="openBlogModal(${b.id},${id})" style="width:48px;height:32px;border-radius:4px;overflow:hidden;background:var(--bg2);border:1px solid var(--border);cursor:pointer;flex-shrink:0" title="Trocar imagem">
+                ${b.imagem_url ? `<img src="${esc(b.imagem_url)}" style="width:100%;height:100%;object-fit:cover">` : '<span style="font-size:.55rem;color:var(--text3);display:flex;align-items:center;justify-content:center;height:100%">Sem foto</span>'}
+              </div>
+              <div class="blog-row-info">
+                <div class="blog-row-title">${esc(b.title)}</div>
+                <div class="blog-row-meta">${fmtDate(b.created_at)}${b.slug ? ' · '+esc(b.slug) : ''}</div>
+              </div>
+              ${statusBadge(b.status)}
+              <div style="display:flex;gap:.25rem">
+                <button class="btn btn-ghost btn-xs" onclick="openBlogModal(${b.id},${id})" title="Trocar Imagem / Editar">
+                  📷 Trocar Foto
+                </button>
+                <button class="btn btn-danger btn-xs" onclick="deleteBlog(${b.id})">
+                  <svg width="11" height="11" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M2 4h12M5 4V2h6v2M6 7v5M10 7v5M3 4l1 10h8L13 4"/></svg>
+                </button>
+              </div>
+            </div>`).join('')}
+      </div>
+    </div>
+  `;
+
+  document.getElementById('panelBackdrop').classList.add('open');
+  document.getElementById('clientPanel').classList.add('open');
+}
+
+function closePanel() {
+  document.getElementById('panelBackdrop').classList.remove('open');
+  document.getElementById('clientPanel').classList.remove('open');
+}
+
+// ── ANÚNCIOS DO BLOG ──────────────────────────────────────────────────────────
+function renderAdsSection() {
+  const st = window._adsState || {};
+  return ['horizontal','sidebar'].map(pos => {
+    const a = st[pos] || { ativo:0, imagem_url:'', link_url:'', views:0, clicks:0 };
+    const label = pos === 'horizontal' ? 'Banner Horizontal (728x90)' : 'Banner Lateral (300x250)';
+    const vis = a.imagem_url
+      ? `<img src="${esc(a.imagem_url)}" style="max-width:100%;max-height:64px;object-fit:contain;border-radius:6px;border:1px solid var(--border);display:block">`
+      : '<span style="color:var(--text3);font-size:.72rem">Sem imagem — mostra o texto do espaço publicitário</span>';
+    return `
+      <div style="background:var(--bg2);border:1px solid var(--border);border-radius:10px;padding:.875rem;display:flex;flex-direction:column;gap:.625rem">
+        <div style="display:flex;align-items:center;justify-content:space-between;gap:.5rem;flex-wrap:wrap">
+          <span style="font-size:.78rem;font-weight:600">${label}</span>
+          <label style="display:inline-flex;align-items:center;gap:.4rem;font-size:.72rem;font-weight:600;cursor:pointer">
+            <input type="checkbox" id="ad-${pos}-ativo" ${a.ativo ? 'checked' : ''} onchange="adToggle('${pos}')" style="accent-color:var(--ink);width:14px;height:14px">
+            ${a.ativo ? 'Ativo' : 'Inativo'}
+          </label>
+        </div>
+        <div id="ad-${pos}-preview" style="min-width:0">${vis}</div>
+        <div style="display:flex;gap:.5rem;flex-wrap:wrap">
+          <input type="file" id="ad-${pos}-file" accept="image/*" style="display:none" onchange="adUpload('${pos}',this)">
+          <button class="btn btn-ghost btn-xs" onclick="document.getElementById('ad-${pos}-file').click()">📤 Enviar imagem</button>
+          ${a.imagem_url ? `<button class="btn btn-danger btn-xs" onclick="adRemoveImg('${pos}')">Remover imagem</button>` : ''}
+        </div>
+        <input class="form-input" id="ad-${pos}-link" placeholder="Link do anúncio (https://...)" value="${esc(a.link_url||'')}" style="font-size:.78rem">
+        <div style="display:flex;gap:1.25rem;font-size:.72rem;color:var(--text3)">
+          <span>👁 <b style="color:var(--text)">${a.views||0}</b> views</span>
+          <span>🖱 <b style="color:var(--text)">${a.clicks||0}</b> cliques</span>
+        </div>
+      </div>`;
+  }).join('');
+}
+
+function adToggle(pos) {
+  if (window._adsState[pos]) window._adsState[pos].ativo = document.getElementById('ad-'+pos+'-ativo').checked ? 1 : 0;
+}
+
+async function adUpload(pos, input) {
+  const f = input.files && input.files[0];
+  if (!f) return;
+  if (f.size > 2 * 1024 * 1024) { toast('Imagem muito grande (máx 2MB)', 'error'); return; }
+  const reader = new FileReader();
+  reader.onload = async () => {
+    try {
+      const r = await api('/api/ads/upload', 'POST', { client_id: currentClientId, posicao: pos, data: reader.result });
+      if (window._adsState[pos]) window._adsState[pos].imagem_url = r.url;
+      document.getElementById('ad-'+pos+'-preview').innerHTML =
+        `<img src="${esc(r.url)}" style="max-width:100%;max-height:64px;object-fit:contain;border-radius:6px;border:1px solid var(--border);display:block">`;
+      toast('Imagem enviada ✅ — clique em Salvar Anúncios');
+    } catch(e) { toast('Erro no upload: ' + e.message, 'error'); }
+  };
+  reader.onerror = () => toast('Falha ao ler a imagem', 'error');
+  reader.readAsDataURL(f);
+}
+
+function adRemoveImg(pos) {
+  if (window._adsState[pos]) window._adsState[pos].imagem_url = '';
+  document.getElementById('ad-'+pos+'-preview').innerHTML = '<span style="color:var(--text3);font-size:.72rem">Sem imagem</span>';
+  toast('Imagem removida — clique em Salvar Anúncios');
+}
+
+async function saveAds() {
+  const st = window._adsState || {};
+  const items = ['horizontal','sidebar'].map(pos => {
+    const a = st[pos] || {};
+    return {
+      posicao: pos,
+      ativo: !!document.getElementById('ad-'+pos+'-ativo')?.checked,
+      imagem_url: a.imagem_url || null,
+      link_url: document.getElementById('ad-'+pos+'-link')?.value.trim() || ''
+    };
+  });
+  try {
+    await api('/api/clients/' + currentClientId + '/ads', 'PUT', items);
+    toast('Anúncios salvos! ✅');
+    openPanel(currentClientId);
+  } catch(e) { toast('Erro ao salvar: ' + e.message, 'error'); }
+}
+
+function viewCurrentBlog() {
+  if (currentClient && currentClient.slug) {
+    window.open('/blog/' + currentClient.slug, '_blank');
+  } else {
+    toast('Slug do cliente não disponível', 'error');
+  }
+}
+
+function editCurrentClient()    { closePanel(); openClientModal(currentClientId); }
+function analyzeCurrentClient() {
+  nav('analyzer', document.querySelector('[data-page=analyzer]'));
+  setTimeout(() => {
+    const c = clients.find(x => x.id === currentClientId);
+    if (c?.website) document.getElementById('analyzeUrl').value = c.website;
+    document.getElementById('analyzeClientSel').value = currentClientId;
+  }, 100);
+  closePanel();
+}
+
+
+function updateBlogImgPreview(url) {
+  const img = document.getElementById('blogImgPreview');
+  const empty = document.getElementById('blogImgEmpty');
+  if (img && empty) {
+    if (url && url.trim()) {
+      img.src = url;
+      img.style.display = 'block';
+      empty.style.display = 'none';
+    } else {
+      img.style.display = 'none';
+      empty.style.display = 'block';
+    }
+  }
+}
+
+function clearBlogImg() {
+  document.getElementById('b-imagem_url').value = '';
+  updateBlogImgPreview('');
+}
+
+async function uploadBlogImgFile(input) {
+  const file = input.files && input.files[0];
+  if (!file) return;
+  if (file.size > 5 * 1024 * 1024) { toast('Imagem muito grande (máx 5MB)', 'error'); return; }
+  const reader = new FileReader();
+  reader.onload = async () => {
+    try {
+      const blogId = document.getElementById('blogId').value;
+      if (blogId) {
+        const r = await api('/api/blogs/' + blogId + '/imagem', { method: 'POST', body: { data: reader.result } });
+        document.getElementById('b-imagem_url').value = r.imagem_url;
+        updateBlogImgPreview(r.imagem_url);
+        toast('Imagem atualizada com sucesso! ✅');
+      } else {
+        document.getElementById('b-imagem_url').value = reader.result;
+        updateBlogImgPreview(reader.result);
+        toast('Imagem carregada! ✅');
+      }
+    } catch(e) { toast('Erro no upload: ' + e.message, 'error'); }
+  };
+  reader.readAsDataURL(file);
+}
+
+/* ── Blog Modal ──────────────────────────────────────────────────────────────── */
+function autoSlug(title) {
+  const slug = title.toLowerCase()
+    .normalize('NFD').replace(/[̀-ͯ]/g,'')
+    .replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'');
+  document.getElementById('b-slug').value = slug;
+}
+
+async function openBlogModal(blogId, clientId) {
+  document.getElementById('blogId').value = blogId || '';
+  document.getElementById('blogClientId').value = clientId;
+  document.getElementById('blogModalTitle').textContent = blogId ? 'Editar Post / Trocar Imagem' : 'Novo Artigo';
+  ['title','slug','content','imagem_url'].forEach(f => {
+    const el = document.getElementById('b-'+f);
+    if (el) el.value = '';
+  });
+  updateBlogImgPreview('');
+  document.getElementById('b-status').value = 'rascunho';
+  if (blogId) {
+    const blogs = await api('/api/clients/'+clientId+'/blogs');
+    const b = blogs.find(x => x.id === blogId);
+    if (b) {
+      document.getElementById('b-title').value      = b.title      || '';
+      document.getElementById('b-slug').value       = b.slug       || '';
+      document.getElementById('b-status').value     = b.status     || 'rascunho';
+      document.getElementById('b-content').value    = b.content    || '';
+      document.getElementById('b-imagem_url').value = b.imagem_url || '';
+      updateBlogImgPreview(b.imagem_url || '');
+    }
+  }
+  document.getElementById('blogModal').classList.add('open');
+}
+
+function closeBlogModal() { document.getElementById('blogModal').classList.remove('open') }
+
+async function saveBlog() {
+  const id = document.getElementById('blogId').value;
+  const clientId = document.getElementById('blogClientId').value;
+  const body = {
+    title:      document.getElementById('b-title').value.trim(),
+    slug:       document.getElementById('b-slug').value.trim(),
+    status:     document.getElementById('b-status').value,
+    content:    document.getElementById('b-content').value.trim(),
+    imagem_url: document.getElementById('b-imagem_url').value.trim()
+  };
+  if (!body.title) { toast('Título é obrigatório', 'error'); return; }
+  const btn = document.getElementById('saveBlogBtn');
+  btn.disabled = true; btn.innerHTML = '<span class="spin"></span> Salvando...';
+  try {
+    if (id) { await api('/api/blogs/'+id,              {method:'PUT', body}); toast('Blog atualizado!'); }
+    else    { await api('/api/clients/'+clientId+'/blogs',{method:'POST',body}); toast('Blog criado!'); }
+    closeBlogModal(); loadStats(); loadAllBlogs();
+    if (currentClientId) openPanel(currentClientId);
+  } catch(e) { toast(e.message, 'error'); }
+  finally { btn.disabled = false; btn.textContent = 'Salvar'; }
+}
+
+async function deleteBlog(id) {
+  const ok = await showGlassConfirm({
+    title: 'Excluir Artigo',
+    message: 'Tem certeza que deseja excluir permanentemente este post do blog?',
+    confirmText: 'Excluir Artigo',
+    isDestructive: true
+  });
+  if (!ok) return;
+  await api('/api/blogs/'+id, {method:'DELETE'});
+  toast('Blog removido');
+  loadStats(); loadAllBlogs();
+  if (currentClientId) openPanel(currentClientId);
+}
+
+/* ── All Blogs ───────────────────────────────────────────────────────────────── */
+async function loadAllBlogs() {
+  const allClients = await api('/api/clients?search=&status=%');
+  const sel = document.getElementById('blogClientFilter');
+  const cur = sel.value;
+  sel.innerHTML = '<option value="">Todos os clientes</option>' +
+    allClients.map(c => `<option value="${c.id}">${esc(c.name)}</option>`).join('');
+  if (cur) sel.value = cur;
+
+  const tb = document.getElementById('allBlogsTable');
+  const clientId = sel.value;
+  let rows = [];
+
+  if (clientId) {
+    rows = (await api('/api/clients/'+clientId+'/blogs'))
+      .map(b => ({...b, clientName: allClients.find(c => c.id == clientId)?.name || ''}));
+  } else {
+    const all = await Promise.all(allClients.map(c =>
+      api('/api/clients/'+c.id+'/blogs').then(bs => bs.map(b => ({...b, clientName: c.name})))
+    ));
+    rows = all.flat().sort((a,b) => b.id - a.id);
+  }
+
+  if (!rows.length) {
+    tb.innerHTML = `<tr><td colspan="5">${emptyState('📝','Nenhum blog criado','Abra um cliente e crie o primeiro post')}</td></tr>`;
+    return;
+  }
+  tb.innerHTML = rows.map(b => `
+    <tr>
+      <td style="width:60px">
+        <div onclick="openBlogModal(${b.id},${b.client_id})" style="width:56px;height:36px;border-radius:4px;overflow:hidden;background:var(--bg2);border:1px solid var(--border);cursor:pointer;display:flex;align-items:center;justify-content:center" title="Clique para trocar imagem">
+          ${b.imagem_url ? `<img src="${esc(b.imagem_url)}" style="width:100%;height:100%;object-fit:cover">` : '<span style="font-size:.6rem;color:var(--text3)">Sem foto</span>'}
+        </div>
+      </td>
+      <td><div class="td-name">${esc(b.title)}</div><div class="td-sub">${esc(b.slug||'')}</div></td>
+      <td><span style="font-size:.78rem;color:var(--text2)">${esc(b.clientName)}</span></td>
+      <td>${statusBadge(b.status)}</td>
+      <td><span style="font-size:.78rem;color:var(--text3)">${fmtDate(b.created_at)}</span></td>
+      <td>
+        <div style="display:flex;gap:.3rem">
+          <button class="btn btn-ghost btn-xs" onclick="openBlogModal(${b.id},${b.client_id})" title="Editar / Trocar Imagem">
+            📷 Trocar Imagem / Editar
+          </button>
+          <button class="btn btn-danger btn-xs" onclick="deleteBlog(${b.id})" title="Deletar">
+            <svg width="12" height="12" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M2 4h12M5 4V2h6v2M6 7v5M10 7v5M3 4l1 10h8L13 4"/></svg>
+          </button>
+        </div>
+      </td>
+    </tr>
+  `).join('');
+}
+
+
+/* ── Analytics & Planilha de Tráfego ─────────────────────────────────────────── */
+async function loadAnalytics() {
+  const clientId = document.getElementById('analytics-client-sel')?.value || '';
+  const origin = document.getElementById('analytics-origin-sel')?.value || 'all';
+
+  const params = new URLSearchParams();
+  if (clientId) params.set('client_id', clientId);
+  if (origin && origin !== 'all') params.set('origin_type', origin);
+
+  try {
+    const res = await api('/api/analytics?' + params.toString());
+    const stats = res.stats || {};
+    const events = res.events || [];
+
+    document.getElementById('an-total').textContent = stats.total_events || 0;
+    document.getElementById('an-organico').textContent = stats.google_organico || 0;
+    document.getElementById('an-whatsapp').textContent = stats.clicks_whatsapp || 0;
+    document.getElementById('an-leituras').textContent = stats.leituras_completas || 0;
+
+    const tb = document.getElementById('analyticsTableBody');
+    if (!events.length) {
+      tb.innerHTML = '<tr><td colspan="8" style="text-align:center;padding:2.5rem 0;color:var(--text3)">Nenhum registro de tráfego encontrado com os filtros selecionados.</td></tr>';
+      return;
+    }
+
+    tb.innerHTML = events.map(e => {
+      let badgeClass = 'badge-ink';
+      if (e.origin_type === 'Google Orgânico') badgeClass = 'badge-green';
+      else if (e.origin_type === 'Google Ads') badgeClass = 'badge-amber';
+      else if (e.origin_type === 'Meta / Instagram Ads') badgeClass = 'badge-purple';
+      else if (e.origin_type === 'Direto / Link') badgeClass = 'badge-blue';
+
+      let actionText = e.action;
+      if (e.action === 'pageview') actionText = '👁 Visualizou Página';
+      else if (e.action === 'read_post_35s') actionText = '⏱️ Leu Artigo (+35s)';
+      else if (e.action === 'click_cta_whatsapp') actionText = '🟢 Clicou no WhatsApp';
+      else if (e.action === 'click_bairro') actionText = '📍 Clicou no Bairro';
+      else if (e.action === 'popup_displayed') actionText = '💬 Viu Pop-up CTA';
+
+      return `
+        <tr>
+          <td><span style="font-size:.75rem;color:var(--text3)">${fmtDate(e.created_at)}</span></td>
+          <td><div class="td-name">${esc(e.client_name || 'Blog Geral')}</div></td>
+          <td><span class="badge ${badgeClass}">${esc(e.origin_type || 'Direto')}</span></td>
+          <td><div style="font-family:monospace;font-size:.75rem">${esc(e.ip)} <span style="font-size:.65rem;color:var(--text3)">(${esc(e.ip_version)})</span></div></td>
+          <td><span style="font-size:.78rem">${esc(e.city || 'Brasil')}</span></td>
+          <td><span style="font-size:.75rem;color:var(--text2)">${esc(e.device)} · ${esc(e.browser)}</span></td>
+          <td><span class="td-sub">${esc(e.post_slug || 'Home')}</span></td>
+          <td><span style="font-weight:600;font-size:.78rem">${actionText}</span></td>
+        </tr>
+      `;
+    }).join('');
+  } catch(e) {
+    console.error('Erro ao carregar analytics:', e);
+  }
+}
+
+function exportAnalyticsCsv() {
+  window.open('/api/analytics/export.csv', '_blank');
+  toast('Baixando planilha de tráfego... 📥');
+}
+
+const PALAVRAS_NIVEL_BRASIL_LIST = [
+  "desentupidora 24h", "desentupidora 24 horas", "desentupidora urgente", "desentupidora perto de mim",
+  "telefone desentupidora", "orçamento desentupidora", "preço desentupidora", "empresa de desentupimento",
+  "serviço de desentupimento", "desentupidora de esgoto", "desentupimento de esgoto", "desentupir esgoto",
+  "desentupir esgotos", "desentupidora de esgoto 24 horas", "empresa de desentupimento de esgoto",
+  "serviço de desentupimento de esgoto", "desentupidora de rede de esgoto", "desentupimento de rede de esgoto",
+  "desentupir cano de esgoto", "desentupimento de tubulação de esgoto", "desentupidora caixa de esgoto",
+  "desentupimento de caixa de esgoto", "limpeza de caixa de esgoto", "limpar caixa de esgoto",
+  "desentupidora de pia", "desentupimento de pia", "desentupidora de pias", "desentupidora de ralo",
+  "desentupimento de ralo", "ralo entupido", "desentupidora de vaso sanitário", "desentupimento de vaso sanitário",
+  "desentupidor de vaso 24 horas", "empresa que desentope vaso sanitário", "desentupidora de caixa de gordura",
+  "desentupimento caixa de gordura", "empresa de limpeza de caixa de gordura", "empresa para desentupir caixa de gordura",
+  "limpeza caixa de gordura preço", "hidrojateamento", "hidrojateamento de esgoto", "serviço de hidrojateamento"
+];
+
+function inject42NationalKeywords() {
+  document.getElementById('kw-client-sel').value = 'all';
+  document.getElementById('kw-termo').value = PALAVRAS_NIVEL_BRASIL_LIST.join('\n');
+  toast('42 palavras nacionais preenchidas! Selecionado: TODOS OS CLIENTES 🌟');
+}
+
+/* ── Analyzer ────────────────────────────────────────────────────────────────── */
+async function loadClientSelects() {
+  const all = await api('/api/clients?search=&status=%');
+  ['analyzeClientSel'].forEach(sid => {
+    const sel = document.getElementById(sid);
+    if (!sel) return;
+    sel.innerHTML = '<option value="">Não vincular a cliente</option>' +
+      all.map(c => `<option value="${c.id}">${esc(c.name)}</option>`).join('');
+  });
+
+  const kwSel = document.getElementById('kw-client-sel');
+  if (kwSel) {
+    const curVal = kwSel.value;
+    kwSel.innerHTML = '<option value="">Selecione...</option><option value="all">🌟 [TODOS OS CLIENTES / GLOBAL]</option>' +
+      all.map(c => `<option value="${c.id}">${esc(c.name)}</option>`).join('');
+    if (curVal) kwSel.value = curVal;
+  }
+
+  const anSel = document.getElementById('analytics-client-sel');
+  if (anSel) {
+    anSel.innerHTML = '<option value="">Todos os clientes</option>' +
+      all.map(c => `<option value="${c.id}">${esc(c.name)}</option>`).join('');
+  }
+}
+
+async function runAnalyze() {
+  const url = document.getElementById('analyzeUrl').value.trim();
+  const clientId = document.getElementById('analyzeClientSel').value;
+  if (!url) { toast('Informe a URL', 'error'); return; }
+  const btn = document.getElementById('analyzeBtn');
+  const res = document.getElementById('analyzeResult');
+  btn.disabled = true;
+  btn.innerHTML = '<span class="spin"></span> Analisando...';
+  res.innerHTML = '';
+  try {
+    const params = new URLSearchParams({url});
+    if (clientId) params.set('client_id', clientId);
+    const d = await api('/api/analyze?' + params);
+    const data = d.data;
+    res.innerHTML = `
+      <div class="result-box">
+        <div class="result-box-header">
+          <span class="badge badge-ink">${esc(data.nicho)}</span>
+          ${data.design.cores.primaryColor
+            ? `<div class="swatch-row">
+                 <div class="swatch" style="background:${data.design.cores.primaryColor}"></div>
+                 <span style="font-size:.72rem;color:var(--text3)">Primária</span>
+               </div>` : ''}
+          ${data.design.cores.backgroundColor
+            ? `<div class="swatch-row">
+                 <div class="swatch" style="background:${data.design.cores.backgroundColor}"></div>
+                 <span style="font-size:.72rem;color:var(--text3)">Fundo</span>
+               </div>` : ''}
+          ${clientId ? `<span class="badge badge-green" style="margin-left:auto">✓ Salvo no cliente</span>` : ''}
+        </div>
+        <pre class="result-json">${esc(JSON.stringify(data, null, 2))}</pre>
+      </div>`;
+    if (clientId) { loadClients(); loadRecentClients(); }
+    toast('Análise concluída!');
+  } catch(e) { toast('Erro: '+e.message, 'error'); }
+  finally { btn.disabled = false; btn.innerHTML = '<svg width="13" height="13" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="7" cy="7" r="4.5"/><path d="M10.5 10.5L14 14"/></svg> Analisar'; }
+}
+
+/* ── API ─────────────────────────────────────────────────────────────────────── */
+async function api(url, opts={}, payload=undefined) {
+  let method = 'GET';
+  let body = undefined;
+
+  if (typeof opts === 'string') {
+    method = opts.toUpperCase();
+    body = payload;
+  } else if (opts && typeof opts === 'object') {
+    method = opts.method || 'GET';
+    body = opts.body !== undefined ? opts.body : payload;
+  }
+
+  // Garantir barra inicial na URL
+  const cleanUrl = url.startsWith('/') ? url : '/' + url;
+
+  const r = await fetch(cleanUrl, {
+    method: method,
+    headers: body !== undefined ? {'Content-Type':'application/json'} : {},
+    body: body !== undefined ? JSON.stringify(body) : undefined,
+  });
+
+  if (!r.ok) {
+    const e = await r.json().catch(() => ({error:'Erro desconhecido'}));
+    if (r.status === 401) { location.href = '/login.html'; return; }
+    throw new Error(e.error || r.statusText);
+  }
+  return r.json();
+}
+
+async function logout() {
+  await fetch('/api/auth/logout', {method:'POST'});
+  location.href = '/login.html';
+}
+
+/* ── Helpers ─────────────────────────────────────────────────────────────────── */
+const esc = s => String(s||'')
+  .replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+
+const shortUrl = u => { try { return new URL(u).hostname } catch { return u } };
+
+const fmtDate = d => new Date(d).toLocaleDateString('pt-BR', {day:'2-digit',month:'short',year:'numeric'});
+
+function statusBadge(s) {
+  return {
+    ativo:     '<span class="badge badge-green">Ativo</span>',
+    inativo:   '<span class="badge badge-red">Inativo</span>',
+    lead:      '<span class="badge badge-amber">Lead</span>',
+    publicado: '<span class="badge badge-emerald" style="background:var(--emerald-s);color:var(--emerald)">Publicado</span>',
+    rascunho:  '<span class="badge badge-gray">Rascunho</span>',
+    arquivado: '<span class="badge badge-amber">Arquivado</span>',
+  }[s] || `<span class="badge badge-gray">${esc(s)}</span>`;
+}
+
+function emptyState(icon, title, sub) {
+  return `<div class="empty"><div style="font-size:2rem;margin-bottom:.5rem">${icon}</div><div class="empty-title">${title}</div><div class="empty-sub">${sub}</div></div>`;
+}
+
+function toast(msg, type='success') {
+  const el = document.createElement('div');
+  el.className = `toast ${type}`;
+  el.innerHTML = `<div class="toast-dot"></div>${esc(msg)}`;
+  document.getElementById('toastZone').appendChild(el);
+  setTimeout(() => el.style.animation='slideRight .2s var(--ease-in) reverse', 2800);
+  setTimeout(() => el.remove(), 3100);
+}
+
+init();
+
+// ── KEYWORDS ─────────────────────────────────────────────────────────────────
+let _schedHorarios = [];
+
+async function loadKeywordSelects() {
+  const clients = await api('/api/clients?limit=999');
+  const rows = clients.rows || clients;
+  ['kw-client-sel','sched-client-sel'].forEach(id => {
+    const sel = document.getElementById(id);
+    if (!sel) return;
+    const val = sel.value;
+    sel.innerHTML = '<option value="">Selecione...</option><option value="ALL">🌐 Todos os Blogs / Todos os Clientes</option>';
+    rows.forEach(c => { sel.innerHTML += `<option value="${c.id}"${c.id==val?' selected':''}>${esc(c.name)}</option>`; });
+    if (val) sel.value = val;
+  });
+}
+
+async function loadKeywords() {
+  const cid = document.getElementById('kw-client-sel')?.value;
+  const list = document.getElementById('kw-list');
+  const cnt = document.getElementById('kw-count');
+  if (!cid) { list.innerHTML = '<div style="color:var(--text3);font-size:.8rem;text-align:center;padding:2rem 0">Selecione um cliente ou [TODOS OS CLIENTES]</div>'; return; }
+  list.innerHTML = '<div style="color:var(--text3);font-size:.8rem;text-align:center;padding:1rem 0">Carregando...</div>';
+  const targetCid = (cid.toLowerCase() === 'all' || cid.toLowerCase() === 'todos') ? 'ALL' : cid;
+  const kws = await api('/api/keywords/' + targetCid);
+  cnt.textContent = kws.length; cnt.style.display = kws.length ? 'inline-flex' : 'none';
+  if (!kws.length) {
+    list.innerHTML = '<div style="color:var(--text3);font-size:.8rem;text-align:center;padding:2rem 0">Nenhuma palavra-chave ainda</div>';
+    return;
+  }
+  const isGlobal = (targetCid === 'ALL');
+  list.innerHTML = (isGlobal ? '<div style="padding:.6rem .8rem;margin-bottom:.75rem;background:rgba(37,99,235,0.12);border:1px solid rgba(37,99,235,0.25);border-radius:var(--radius-sm);font-size:.78rem;color:#93c5fd;display:flex;align-items:center;gap:.5rem"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg> Visualizando palavras-chave de todos os sites cadastrados</div>' : '') +
+    kws.map((k,i) => `
+    <div class="kw-item" id="kwitem-${k.id}" style="background:var(--surface2);border:1px solid var(--border);border-radius:var(--radius-sm);margin-bottom:.4rem;padding:.5rem .75rem;display:flex;align-items:center;gap:.75rem">
+      <div class="kw-item-order" style="font-family:monospace;font-size:.75rem;color:var(--text3);min-width:24px">${i+1}</div>
+      <div style="flex:1">
+        <div class="kw-item-term" style="font-weight:600;color:var(--text);font-size:.85rem">${esc(k.termo)} ${k.client_name ? `<span style="font-size:.7rem;font-weight:normal;color:#60a5fa;margin-left:.4rem;background:rgba(37,99,235,0.15);padding:1px 6px;border-radius:4px">${esc(k.client_name)}</span>` : ''}</div>
+        ${k.variacao ? `<div class="kw-item-var" style="font-size:.72rem;color:var(--text3)">→ ${esc(k.variacao)}</div>` : ''}
+      </div>
+      ${k.usado_em ? `<span class="badge badge-gray" style="font-size:.65rem">Usado ${new Date(k.usado_em).toLocaleDateString('pt-BR')}</span>` : '<span class="badge badge-green" style="font-size:.65rem">✨ Disponível</span>'}
+      <button class="btn btn-ghost btn-xs" style="color:var(--rose);padding:2px 6px" onclick="deleteKeyword(${k.id})" title="Remover">✕</button>
+    </div>`).join('');
+}
+
+async function addKeyword() {
+  const cid = document.getElementById('kw-client-sel').value;
+  const variacao = document.getElementById('kw-variacao').value.trim();
+  if (!cid) { toast('Selecione um cliente ou TODOS', 'error'); return; }
+  const termos = document.getElementById('kw-termo').value.split('\n').map(s => s.trim()).filter(Boolean);
+  if (!termos.length) { toast('Informe ao menos um termo (um por linha)', 'error'); return; }
+  const btn = event?.target?.closest('button'); if (btn) btn.disabled = true;
+  try {
+    const targetCid = (cid.toLowerCase() === 'all' || cid.toLowerCase() === 'todos') ? 'ALL' : parseInt(cid);
+    const r = await api('/api/keywords/batch', 'POST', { client_id: targetCid, keywords: termos, variacao: variacao || null });
+    if (targetCid === 'ALL') {
+      toast(`✅ ${termos.length} termo(s) injetados em TODOS os ${r.clientsCount || 'clientes'} sites! 🚀`);
+    } else {
+      toast(`✅ ${r.count || termos.length} palavra(s)-chave adicionada(s) com sucesso!`);
+    }
+    document.getElementById('kw-termo').value = '';
+    document.getElementById('kw-variacao').value = '';
+    loadKeywords();
+  } catch(e) {
+    toast('Erro ao adicionar palavras-chave: ' + e.message, 'error');
+  } finally {
+    if (btn) btn.disabled = false;
+  }
+}
+
+async function generateBatchPostsForClient() {
+  const cid = document.getElementById('kw-client-sel').value;
+  if (!cid) { toast('Selecione um cliente primeiro', 'error'); return; }
+  const kws = await api('/api/keywords/' + cid);
+  const unused = kws.filter(k => !k.usado_em);
+  if (!unused.length) { toast('Não há palavras-chave novas não usadas para este cliente', 'info'); return; }
+  const ok = await showGlassConfirm({
+    title: 'Geração de Posts em Lote',
+    message: `Deseja disparar a geração de ${unused.length} post(s) com a IA para as palavras-chave não utilizadas?`,
+    confirmText: 'Iniciar Geração ⚡'
+  });
+  if (!ok) return;
+  toast(`🚀 Geração de ${unused.length} post(s) iniciada em segundo plano!`, 'info');
+  await api('/api/gerar-post/batch', 'POST', { client_ids: [parseInt(cid)], count_per_client: unused.length });
+}
+
+async function deleteKeyword(id) {
+  const ok = await showGlassConfirm({
+    title: 'Remover Palavra-chave',
+    message: 'Deseja remover este termo do banco de palavras-chave?',
+    confirmText: 'Remover',
+    isDestructive: true
+  });
+  if (!ok) return;
+  await api('/api/keywords/' + id, 'DELETE');
+  const el = document.getElementById('kwitem-' + id);
+  if (el) { el.style.opacity='0'; el.style.transform='translateX(10px)'; el.style.transition='all .2s'; setTimeout(()=>el.remove(),200); }
+  toast('Removida');
+  loadKeywords();
+}
+
+// ── SCHEDULER ────────────────────────────────────────────────────────────────
+function parseSafeArray(val, isNumber = false) {
+  if (!val) return [];
+  if (Array.isArray(val)) return val;
+  try {
+    const parsed = JSON.parse(val);
+    if (Array.isArray(parsed)) return parsed;
+  } catch(e) {}
+  if (typeof val === 'string') {
+    if (isNumber) {
+      const m = val.match(/\d+/g);
+      if (m) return m.map(Number);
+    } else {
+      const m = val.match(/\b\d{1,2}:\d{2}\b/g);
+      if (m) return m;
+    }
+  }
+  return [];
+}
+
+async function loadScheduler() {
+  await loadKeywordSelects();
+  const list = document.getElementById('sched-list');
+  const timeEl = document.getElementById('sched-server-time');
+  try {
+    const ss = await api('/api/scheduler-status');
+    if(timeEl) timeEl.textContent = ss.serverTime;
+    const schedules = ss.activeSchedules || [];
+    if (!schedules.length) {
+      list.innerHTML = '<div style="color:var(--text3);font-size:.8rem;text-align:center;padding:2rem 0">Nenhum agendamento ativo. Adicione um abaixo.</div>';
+      return;
+    }
+    list.innerHTML = schedules.map(s => {
+      const horarios = parseSafeArray(s.horarios, false);
+      const dias = parseSafeArray(s.dias_semana, true);
+      const diasMap = {1:'Seg',2:'Ter',3:'Qua',4:'Qui',5:'Sex',6:'Sáb',7:'Dom'};
+      const ultimo = s.ultimo_post ? `Último: ${new Date(s.ultimo_post.endsWith('Z') ? s.ultimo_post : s.ultimo_post + 'Z').toLocaleString('pt-BR')}` : 'Nenhum post ainda';
+      const clientLabel = (s.client_id === 0 || s.client_id === 'ALL') ? '🌐 Todos os Blogs' : (s.client_name || `Cliente #${s.client_id}`);
+      return `<div class="sched-item">
+        <div class="sched-item-name">${esc(clientLabel)}</div>
+        <div class="sched-item-times">${horarios.map(h=>`<span class="horario-chip"><svg style="width:11px;height:11px;flex-shrink:0" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="8" cy="8" r="6"/><path d="M8 4.5v3.5l2.5 2.5"/></svg> ${h}</span>`).join('')}</div>
+        <div style="font-size:.7rem;color:var(--text3)">${dias.map(d=>diasMap[d]||d).join(', ')}</div>
+        <div style="font-size:.68rem;color:var(--text3);white-space:nowrap">${ultimo}</div>
+        <button class="sched-del" onclick="deleteSchedule(${s.id})" title="Remover">✕</button>
+      </div>`;
+    });
+  } catch(e) {
+    console.error('Error loading schedules:', e);
+    list.innerHTML = '<div style="color:var(--text3);font-size:.8rem;text-align:center;padding:1rem">Nenhum agendamento ativo</div>';
+  }
+}
+
+// ── RELÓGIO ANALÓGICO (Agendador) ───────────────────────────────────────────
+function drawClockTicks() {
+  const wrap = document.getElementById('clockTicks');
+  if (!wrap || wrap.childElementCount) return;
+  const NS = 'http://www.w3.org/2000/svg';
+  for (let i = 0; i < 12; i++) {
+    const ang = (i * 30) * Math.PI / 180;
+    const major = i % 3 === 0;
+    const r1 = major ? 47 : 50, r2 = 53;
+    const line = document.createElementNS(NS, 'line');
+    line.setAttribute('x1', (60 + r1 * Math.sin(ang)).toFixed(2));
+    line.setAttribute('y1', (60 - r1 * Math.cos(ang)).toFixed(2));
+    line.setAttribute('x2', (60 + r2 * Math.sin(ang)).toFixed(2));
+    line.setAttribute('y2', (60 - r2 * Math.cos(ang)).toFixed(2));
+    line.setAttribute('stroke', major ? 'var(--ink)' : 'var(--border2)');
+    line.setAttribute('stroke-width', major ? '2.5' : '1');
+    line.setAttribute('stroke-linecap', 'round');
+    wrap.appendChild(line);
+  }
+}
+
+function updateClock() {
+  const digital = document.getElementById('clock-digital');
+  if (!digital) return;
+  const hh = document.getElementById('hand-hour');
+  const mm = document.getElementById('hand-minute');
+  const ss = document.getElementById('hand-second');
+
+  const now = new Date();
+  const brt = new Date(now.toLocaleString('en-US', { timeZone: 'America/Sao_Paulo' }));
+  const h = brt.getHours() % 12, m = brt.getMinutes(), s = brt.getSeconds();
+  const ms = now.getMilliseconds();
+
+  if (hh) hh.setAttribute('transform', `rotate(${(h * 30 + m * 0.5).toFixed(3)} 60 60)`);
+  if (mm) mm.setAttribute('transform', `rotate(${(m * 6 + s * 0.1).toFixed(3)} 60 60)`);
+  if (ss) ss.setAttribute('transform', `rotate(${(s * 6 + ms * 0.006).toFixed(3)} 60 60)`);
+
+  digital.textContent = brt.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+  const dateEl = document.getElementById('clock-date');
+  if (dateEl) {
+    dateEl.textContent = brt.toLocaleDateString('pt-BR', { weekday: 'long', day: '2-digit', month: 'long', year: 'numeric' });
+  }
+}
+
+drawClockTicks();
+updateClock();
+setInterval(updateClock, 250);
+
+function setScheduleDays(mode) {
+  const inputs = document.querySelectorAll('#sched-dias-wrap input');
+  inputs.forEach(inp => {
+    const val = parseInt(inp.value);
+    if (mode === 'all') inp.checked = true;
+    else if (mode === 'weekdays') inp.checked = (val >= 1 && val <= 5);
+  });
+}
+
+
+async function saveSchedule() {
+  const cid = document.getElementById('sched-client-sel').value;
+  if (!cid) { toast('Selecione um cliente ou [Todos os Blogs]', 'error'); return; }
+  if (!_schedHorarios.length) { toast('Adicione pelo menos um horário', 'error'); return; }
+  const dias = [...document.querySelectorAll('#sched-dias-wrap input:checked')].map(i => parseInt(i.value));
+  if (!dias.length) { toast('Selecione pelo menos um dia', 'error'); return; }
+  const targetCid = (cid.toLowerCase() === 'all' || cid.toLowerCase() === 'todos') ? 'ALL' : parseInt(cid);
+  const r = await api('/api/schedules', 'POST', {
+    client_id: targetCid,
+    horarios: _schedHorarios,
+    dias_semana: dias,
+    ativo: 1,
+    posts_por_dia: parseInt(document.getElementById('sched-posts-per-day').value)
+  });
+  if (targetCid === 'ALL') {
+    toast(`Agendamento configurado para TODOS os ${r.count || ''} clientes/blogs! 🌐✅`);
+  } else {
+    toast('Agendamento salvo com sucesso! O bot vai postar automaticamente. ✅');
+  }
+  _schedHorarios = [];
+  renderHorariosChips();
+  loadScheduler();
+  loadStats();
+}
+
+async function deleteSchedule(id) {
+  const ok = await showGlassConfirm({
+    title: 'Remover Agendamento',
+    message: 'Deseja remover este agendamento automático de postagem?',
+    confirmText: 'Remover',
+    isDestructive: true
+  });
+  if (!ok) return;
+  await api('/api/schedules/' + id, 'DELETE');
+  toast('Agendamento removido');
+  loadScheduler();
+  loadStats();
+}
+
+async function testPost() {
+  const cid = document.getElementById('sched-client-sel').value;
+  if (!cid) { toast('Selecione um cliente ou [Todos os Blogs]', 'error'); return; }
+  const targetCid = (cid.toLowerCase() === 'all' || cid.toLowerCase() === 'todos') ? 'ALL' : parseInt(cid);
+  
+  if (targetCid === 'ALL') {
+    toast('🚀 Gerando posts para TODOS os blogs em segundo plano... Isso pode levar alguns minutos.', 'info');
+    try {
+      const r = await api('/api/gerar-post', 'POST', { client_id: 'ALL' });
+      toast(r.message || 'Geração para todos os blogs iniciada!', 'success');
+      setTimeout(() => { loadPosts(); loadStats(); }, 5000);
+    } catch(e) {
+      toast('Erro na geração: ' + e.message, 'error');
+    }
+  } else {
+    toast('⏳ Gerando post com IA... pode levar até 40 segundos', 'info');
+    try {
+      const r = await api('/api/gerar-post', 'POST', { client_id: targetCid });
+      if (r.success) {
+        toast(`✅ Post criado com sucesso: "${r.titulo}"`, 'success');
+        loadPosts();
+        loadStats();
+      } else {
+        toast('Erro: ' + (r.error || 'Erro desconhecido'), 'error');
+      }
+    } catch(e) { toast('Erro na geração: ' + e.message, 'error'); }
+  }
+}
+
+function addHorario() {
+  const h = document.getElementById('sched-horario-input').value;
+  if (!h) return;
+  if (!_schedHorarios.includes(h)) { _schedHorarios.push(h); _schedHorarios.sort(); }
+  document.getElementById('sched-horario-input').value = '';
+  renderHorariosChips();
+}
+
+function renderHorariosChips() {
+  const w = document.getElementById('sched-horarios-wrap');
+  w.innerHTML = _schedHorarios.map(h =>
+    `<span class="horario-chip"><svg style="width:11px;height:11px;flex-shrink:0" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="8" cy="8" r="6"/><path d="M8 4.5v3.5l2.5 2.5"/></svg> ${h} <button onclick="removeHorario('${h}')">✕</button></span>`
+  ).join('');
+}
+
+function removeHorario(h) {
+  _schedHorarios = _schedHorarios.filter(x => x !== h);
+  renderHorariosChips();
+}
+
+/* ── Monetização & Anúncios ──────────────────────────────────────────────────── */
+async function loadAdsSelects() {
+  const all = await api('/api/clients?search=&status=%');
+  const sel = document.getElementById('ads-client-sel');
+  if (!sel) return;
+  const curr = sel.value;
+  sel.innerHTML = '<option value="">Selecione um cliente...</option>' +
+    all.map(c => `<option value="${c.id}">${esc(c.name)}</option>`).join('');
+  if (curr) {
+    sel.value = curr;
+    loadAdsForClient();
+  } else if (all.length > 0) {
+    sel.value = all[0].id;
+    loadAdsForClient();
+  }
+}
+
+async function loadAdsForClient() {
+  const cid = document.getElementById('ads-client-sel').value;
+  const container = document.getElementById('ads-container');
+  const empty = document.getElementById('ads-empty');
+  
+  if (!cid) {
+    if (container) container.style.display = 'none';
+    if (empty) empty.style.display = 'block';
+    return;
+  }
+  
+  if (container) container.style.display = 'block';
+  if (empty) empty.style.display = 'none';
+  
+  const positions = ['horizontal', 'in_article', 'sidebar', 'floating'];
+  positions.forEach(pos => {
+    const chk = document.getElementById(`ad-active-${pos}`);
+    const img = document.getElementById(`ad-img-${pos}`);
+    const link = document.getElementById(`ad-link-${pos}`);
+    const v = document.getElementById(`ad-views-${pos}`);
+    const c = document.getElementById(`ad-clicks-${pos}`);
+    const ctr = document.getElementById(`ad-ctr-${pos}`);
+    
+    if (chk) chk.checked = false;
+    if (img) img.value = '';
+    if (link) link.value = '';
+    if (v) v.textContent = '0';
+    if (c) c.textContent = '0';
+    if (ctr) ctr.textContent = '0.0%';
+    updateToggleLabel(pos);
+  });
+  
+  try {
+    const ads = await api(`/api/clients/${cid}/ads`);
+    if (Array.isArray(ads)) {
+      ads.forEach(ad => {
+        const pos = ad.posicao;
+        const chk = document.getElementById(`ad-active-${pos}`);
+        const img = document.getElementById(`ad-img-${pos}`);
+        const link = document.getElementById(`ad-link-${pos}`);
+        const v = document.getElementById(`ad-views-${pos}`);
+        const c = document.getElementById(`ad-clicks-${pos}`);
+        const ctr = document.getElementById(`ad-ctr-${pos}`);
+        
+        if (chk) chk.checked = !!ad.ativo;
+        if (img) img.value = ad.imagem_url || '';
+        if (link) link.value = ad.link_url || '';
+        if (v) v.textContent = ad.views || 0;
+        if (c) c.textContent = ad.clicks || 0;
+        if (ctr) {
+          const views = ad.views || 0;
+          const clicks = ad.clicks || 0;
+          const rate = views > 0 ? ((clicks / views) * 100).toFixed(1) : '0.0';
+          ctr.textContent = `${rate}%`;
+        }
+        updateToggleLabel(pos);
+      });
+    }
+  } catch(e) {
+    console.error('Erro ao carregar anúncios:', e);
+  }
+}
+
+function updateToggleLabel(posicao) {
+  const chk = document.getElementById(`ad-active-${posicao}`);
+  const lbl = document.getElementById(`ad-lbl-${posicao}`);
+  if (!chk || !lbl) return;
+  lbl.textContent = chk.checked ? 'Ativo' : 'Inativo';
+}
+
+async function saveSingleAd(posicao) {
+  const cid = document.getElementById('ads-client-sel').value;
+  if (!cid) { toast('Selecione um cliente primeiro', 'error'); return; }
+  
+  const positions = ['horizontal', 'in_article', 'sidebar', 'floating'];
+  const adsData = positions.map(pos => {
+    return {
+      posicao: pos,
+      ativo: document.getElementById(`ad-active-${pos}`).checked ? 1 : 0,
+      imagem_url: (document.getElementById(`ad-img-${pos}`).value || '').trim(),
+      link_url: (document.getElementById(`ad-link-${pos}`).value || '').trim()
+    };
+  });
+  
+  try {
+    await api(`/api/clients/${cid}/ads`, {
+      method: 'PUT',
+      body: { ads: adsData }
+    });
+    updateToggleLabel(posicao);
+    toast(`Anúncio (${posicao}) salvo com sucesso! ✅`);
+  } catch(e) {
+    toast('Erro ao salvar anúncio: ' + e.message, 'error');
+  }
+}
+
+async function uploadAdFile(posicao, input) {
+  const cid = document.getElementById('ads-client-sel').value;
+  if (!cid) { toast('Selecione um cliente primeiro', 'error'); return; }
+  if (!input.files || !input.files[0]) return;
+  
+  const file = input.files[0];
+  toast('⏳ Fazendo upload do banner...', 'info');
+
+  const reader = new FileReader();
+  reader.onload = async function(e) {
+    const base64Data = e.target.result;
+    try {
+      const res = await api('/api/ads/upload', 'POST', {
+        client_id: parseInt(cid),
+        posicao: posicao,
+        data: base64Data
+      });
+      if (res && res.url) {
+        document.getElementById(`ad-img-${posicao}`).value = res.url;
+        // Auto-ativa o anúncio após o upload
+        document.getElementById(`ad-active-${posicao}`).checked = true;
+        updateToggleLabel(posicao);
+        await saveSingleAd(posicao);
+        toast('Banner carregado e ativado com sucesso! ✅');
+      } else {
+        toast('Erro no upload: resposta inválida', 'error');
+      }
+    } catch(err) {
+      toast('Erro no upload: ' + err.message, 'error');
+    }
+  };
+  reader.onerror = function() {
+    toast('Erro ao ler arquivo no navegador', 'error');
+  };
+  reader.readAsDataURL(file);
+}
+</script>
+
+<!-- ─── LIQUID GLASS CONFIRMATION MODAL & ALERTS ─── -->
+<div id="glass-confirm-modal" class="glass-modal-overlay" style="display:none" role="dialog" aria-modal="true">
+  <div class="glass-modal-card">
+    <div class="glass-modal-glow"></div>
+    <div class="glass-modal-header">
+      <div id="glass-modal-icon" class="glass-modal-icon">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+      </div>
+      <div>
+        <h3 id="glass-modal-title" class="glass-modal-title">Confirmar Ação</h3>
+        <p id="glass-modal-msg" class="glass-modal-msg">Tem certeza que deseja prosseguir?</p>
+      </div>
+    </div>
+    <div class="glass-modal-actions">
+      <button id="glass-modal-btn-cancel" class="btn btn-ghost">Cancelar</button>
+      <button id="glass-modal-btn-confirm" class="btn btn-primary">Confirmar</button>
+    </div>
+  </div>
+</div>
+
+</body>
+</html>
